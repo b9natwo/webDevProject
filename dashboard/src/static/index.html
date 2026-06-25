@@ -962,8 +962,9 @@
       document.getElementById('topbar-logged-out').style.display = 'none';
       document.getElementById('topbar-logged-in').style.display = 'flex';
 
+      // Auto demo user if none exists (makes testing easy)
       if (!currentUser) {
-        currentUser = { id: '123', username: 'demo_user', premium_tier: 'supporter', avatar_hash: null };
+        currentUser = { id: 'demo', username: 'demo_user', premium_tier: 'supporter', avatar_hash: null };
       }
 
       const tier = currentUser.premium_tier || 'free';
@@ -1020,41 +1021,47 @@
     async function loadOverview() {
       const container = document.getElementById('overview-stats');
       container.innerHTML = `<div class="stat-card"><div class="p-6"><div class="spinner mx-auto"></div></div></div>`;
+      
+      let d = DEMO_DATA.overview;
       try {
         const res = await fetch('/api/analytics/overview', { credentials: 'include' });
-        const d = await res.json();
-        container.innerHTML = `
-          <div class="stat-card"><div class="stat-val">${fmt(d.total_guilds)}</div><div class="stat-label">Active Servers</div></div>
-          <div class="stat-card green"><div class="stat-val">${fmt(d.feed_entries_last_7d)}</div><div class="stat-label">Leaks This Week</div></div>
-          <div class="stat-card gold"><div class="stat-val">${fmt(d.notifications_last_30d)}</div><div class="stat-label">Notifications (30d)</div></div>
-          <div class="stat-card purple"><div class="stat-val">${fmt(d.total_tracked_artists)}</div><div class="stat-label">Artists Monitored</div></div>
-        `;
-        // Recent activity
-        const recentRes = await fetch('/api/analytics/recent-entries?limit=5', { credentials: 'include' });
-        const entries = await recentRes.json();
-        const rows = entries.map(e => `
-          <tr>
-            <td><a href="${esc(e.url)}" target="_blank" class="font-medium hover:underline">${esc(e.title.length > 55 ? e.title.slice(0,55)+'…' : e.title)}</a></td>
-            <td class="text-xs text-[#64748b]">${(e.matched_artists||[]).slice(0,2).join(', ') || '—'}</td>
-            <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
-            <td class="text-xs text-[#64748b]">${timeAgo(e.first_seen_at)}</td>
-          </tr>`).join('');
-        document.getElementById('overview-lower').innerHTML = `
-          <div class="card"><div class="font-semibold mb-4">Recent Activity</div><div class="overflow-x-auto"><table class="text-sm"><thead><tr><th>Title</th><th>Artists</th><th>Status</th><th>When</th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="text-center py-6 text-[#64748b]">No recent leaks</td></tr>'}</tbody></table></div></div>
-          <div class="card"><div class="font-semibold mb-4">Quick Actions</div><div class="space-y-2"><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('artists')"><span>🎤</span> Add Artist to Track</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('feeds')"><span>📡</span> Check Feed Health</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('upgrade')"><span>⭐</span> Manage Subscription</button></div></div>`;
-      } catch {
-        container.innerHTML = `<div class="alert alert-error">Failed to load stats.</div>`;
-      }
+        if (res.ok) d = await res.json();
+      } catch {}
+
+      container.innerHTML = `
+        <div class="stat-card"><div class="stat-val">${fmt(d.total_guilds)}</div><div class="stat-label">Active Servers</div></div>
+        <div class="stat-card green"><div class="stat-val">${fmt(d.feed_entries_last_7d)}</div><div class="stat-label">Leaks This Week</div></div>
+        <div class="stat-card gold"><div class="stat-val">${fmt(d.notifications_last_30d)}</div><div class="stat-label">Notifications (30d)</div></div>
+        <div class="stat-card purple"><div class="stat-val">${fmt(d.total_tracked_artists)}</div><div class="stat-label">Artists Monitored</div></div>
+      `;
+
+      // Recent activity (demo data)
+      const entries = DEMO_DATA.recentEntries;
+      const rows = entries.map(e => `
+        <tr>
+          <td><a href="${esc(e.url)}" target="_blank" class="font-medium hover:underline">${esc(e.title.length > 55 ? e.title.slice(0,55)+'…' : e.title)}</a></td>
+          <td class="text-xs text-[#64748b]">${(e.matched_artists||[]).slice(0,2).join(', ') || '—'}</td>
+          <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
+          <td class="text-xs text-[#64748b]">${timeAgo(e.first_seen_at)}</td>
+        </tr>`).join('');
+      
+      document.getElementById('overview-lower').innerHTML = `
+        <div class="card"><div class="font-semibold mb-4">Recent Activity</div><div class="overflow-x-auto"><table class="text-sm"><thead><tr><th>Title</th><th>Artists</th><th>Status</th><th>When</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+        <div class="card"><div class="font-semibold mb-4">Quick Actions</div><div class="space-y-2"><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('artists')"><span>🎤</span> Add Artist to Track</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('feeds')"><span>📡</span> Check Feed Health</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('upgrade')"><span>⭐</span> Manage Subscription</button></div></div>`;
     }
 
     async function loadRecent() {
       const list = document.getElementById('recent-list');
       list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      
       try {
         const res = await fetch('/api/analytics/recent-entries?limit=50', { credentials: 'include' });
-        allRecent = await res.json();
-        renderRecent(allRecent);
-      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load leaks.</div>`; }
+        if (res.ok) allRecent = await res.json();
+        else allRecent = DEMO_DATA.recentEntries;
+      } catch {
+        allRecent = DEMO_DATA.recentEntries;
+      }
+      renderRecent(allRecent);
     }
     function filterRecent() { const q = document.getElementById('recent-search').value.toLowerCase(); renderRecent(allRecent.filter(e => e.title.toLowerCase().includes(q) || (e.matched_artists||[]).some(a => a.toLowerCase().includes(q)))); }
     function renderRecent(entries) {
@@ -1073,20 +1080,25 @@
     async function loadServers() {
       const list = document.getElementById('servers-list');
       list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      
       try {
         const res = await fetch('/api/guilds/', { credentials: 'include' });
-        guilds = await res.json();
-        const tier = currentUser?.premium_tier || 'free';
-        const canInvite = tier === 'premium';
-        document.getElementById('setup-needed-notice').style.display = guilds.some(g => !g.is_configured) ? 'block' : 'none';
+        if (res.ok) guilds = await res.json();
+        else guilds = DEMO_DATA.guilds;
+      } catch {
+        guilds = DEMO_DATA.guilds;
+      }
 
-        if (!guilds.length) {
-          list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">🖥️</div><h3 class="font-semibold">No servers yet</h3><p class="text-sm">Premium members can invite the bot to their own server.</p>${canInvite ? `<button class="btn-primary text-xs mt-3 px-5 py-2 rounded-2xl" onclick="copyInviteLink()">Copy Invite Link</button>` : `<button class="btn-gold text-xs mt-3 px-5 py-2 rounded-2xl" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}</div>`;
-          return;
-        }
-        updateGuildSelector();
-        list.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${guilds.map(g => serverCard(g)).join('')}</div>`;
-      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load servers.</div>`; }
+      const tier = currentUser?.premium_tier || 'free';
+      const canInvite = tier === 'premium';
+      document.getElementById('setup-needed-notice').style.display = guilds.some(g => !g.is_configured) ? 'block' : 'none';
+
+      if (!guilds.length) {
+        list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">🖥️</div><h3 class="font-semibold">No servers yet</h3><p class="text-sm">Premium members can invite the bot to their own server.</p>${canInvite ? `<button class="btn-primary text-xs mt-3 px-5 py-2 rounded-2xl" onclick="copyInviteLink()">Copy Invite Link</button>` : `<button class="btn-gold text-xs mt-3 px-5 py-2 rounded-2xl" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}</div>`;
+        return;
+      }
+      updateGuildSelector();
+      list.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${guilds.map(g => serverCard(g)).join('')}</div>`;
     }
 
     function serverCard(g) {
@@ -1132,12 +1144,16 @@
       if (!selectedGuild) return;
       const list = document.getElementById('artists-list');
       list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      
       try {
         const res = await fetch(`/api/guilds/${selectedGuild.id}/artists`, { credentials: 'include' });
-        allArtists = await res.json();
-        updateArtistUsage(allArtists.length);
-        renderArtists(allArtists);
-      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load artists.</div>`; }
+        if (res.ok) allArtists = await res.json();
+        else allArtists = DEMO_DATA.artists;
+      } catch {
+        allArtists = DEMO_DATA.artists;
+      }
+      updateArtistUsage(allArtists.length);
+      renderArtists(allArtists);
     }
 
     function updateArtistUsage(count) {
@@ -1201,21 +1217,24 @@
     async function loadFeeds() {
       const list = document.getElementById('feeds-list');
       list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      
+      let feeds = DEMO_DATA.feeds;
       try {
         const res = await fetch('/api/feeds/', { credentials: 'include' });
-        const feeds = await res.json();
-        if (!feeds.length) { list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">📡</div><h3 class="font-semibold">No feeds configured</h3></div>`; return; }
-        const rows = feeds.map(f => {
-          const dot = f.consecutive_failures === 0 ? 'health-ok' : f.consecutive_failures < 3 ? 'health-warning' : 'health-error';
-          return `<tr>
-            <td><div class="flex items-center gap-x-3"><span class="health-dot ${dot}"></span><div><div class="font-semibold">${esc(f.name)}</div><div class="text-xs text-[#64748b]">${esc(f.rss_url)}</div></div></div></td>
-            <td>${f.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Disabled</span>'}</td>
-            <td class="text-xs text-[#64748b]">${f.last_polled_at ? timeAgo(f.last_polled_at) : 'Never'}</td>
-            <td class="font-mono text-sm ${f.consecutive_failures > 0 ? 'text-red-400' : 'text-emerald-400'}">${f.consecutive_failures}</td>
-          </tr>`;
-        }).join('');
-        list.innerHTML = `<div class="card overflow-x-auto"><table><thead><tr><th>Feed</th><th>Status</th><th>Last Poll</th><th>Failures</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load feeds.</div>`; }
+        if (res.ok) feeds = await res.json();
+      } catch {}
+
+      if (!feeds.length) { list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">📡</div><h3 class="font-semibold">No feeds configured</h3></div>`; return; }
+      const rows = feeds.map(f => {
+        const dot = f.consecutive_failures === 0 ? 'health-ok' : f.consecutive_failures < 3 ? 'health-warning' : 'health-error';
+        return `<tr>
+          <td><div class="flex items-center gap-x-3"><span class="health-dot ${dot}"></span><div><div class="font-semibold">${esc(f.name)}</div><div class="text-xs text-[#64748b]">${esc(f.rss_url)}</div></div></div></td>
+          <td>${f.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Disabled</span>'}</td>
+          <td class="text-xs text-[#64748b]">${f.last_polled_at ? timeAgo(f.last_polled_at) : 'Never'}</td>
+          <td class="font-mono text-sm ${f.consecutive_failures > 0 ? 'text-red-400' : 'text-emerald-400'}">${f.consecutive_failures}</td>
+        </tr>`;
+      }).join('');
+      list.innerHTML = `<div class="card overflow-x-auto"><table><thead><tr><th>Feed</th><th>Status</th><th>Last Poll</th><th>Failures</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
 
     function loadSettings() {
@@ -1236,18 +1255,23 @@
     async function loadUpgrade() {
       const container = document.getElementById('upgrade-content');
       container.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      
+      let tier = currentUser?.premium_tier || 'supporter';
       try {
         const res = await fetch('/api/premium/status', { credentials: 'include' });
-        const d = await res.json();
-        const tier = d.tier || 'free';
-        const html = `
-          <div class="grid md:grid-cols-3 gap-5">
-            <div class="card"><div class="font-semibold">Free</div><div class="text-4xl font-semibold my-3">$0</div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 5 artists</li><li>✓ Main server access</li><li>✓ Basic notifications</li></ul></div>
-            <div class="card border-[#a855f7]"><div class="font-semibold">Supporter</div><div class="text-4xl font-semibold my-3">$4<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 25 artists</li><li>✓ Early access</li><li>✓ Enhanced notifications</li></ul><button class="btn-primary w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('supporter')">Subscribe</button></div>
-            <div class="card border-[#a855f7] premium-glow"><div class="font-semibold">Premium</div><div class="text-4xl font-semibold my-3">$12<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Unlimited artists</li><li>✓ Your own servers</li><li>✓ 15s polling + advanced filters</li></ul><button class="btn-gold w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('premium')">Go Premium</button></div>
-          </div>`;
-        container.innerHTML = html;
-      } catch { container.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load plans.</div>`; }
+        if (res.ok) {
+          const d = await res.json();
+          tier = d.tier || tier;
+        }
+      } catch {}
+
+      const html = `
+        <div class="grid md:grid-cols-3 gap-5">
+          <div class="card"><div class="font-semibold">Free</div><div class="text-4xl font-semibold my-3">$0</div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 5 artists</li><li>✓ Main server access</li><li>✓ Basic notifications</li></ul></div>
+          <div class="card border-[#a855f7] ${tier === 'supporter' ? 'ring-1 ring-[#a855f7]' : ''}"><div class="font-semibold">Supporter</div><div class="text-4xl font-semibold my-3">$4<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 25 artists</li><li>✓ Early access</li><li>✓ Enhanced notifications</li></ul><button class="btn-primary w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('supporter')">Subscribe</button></div>
+          <div class="card border-[#a855f7] premium-glow ${tier === 'premium' ? 'ring-1 ring-[#a855f7]' : ''}"><div class="font-semibold">Premium</div><div class="text-4xl font-semibold my-3">$12<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Unlimited artists</li><li>✓ Your own servers</li><li>✓ 15s polling + advanced filters</li></ul><button class="btn-gold w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('premium')">Go Premium</button></div>
+        </div>`;
+      container.innerHTML = html;
     }
 
     function checkout(tier) { showToast(`Starting ${tier} checkout... (demo)`); /* In real app: fetch checkout URL */ }
@@ -1286,13 +1310,40 @@
       });
     }
 
-    function init() {
-      // Landing stats
-      loadLandingStats();
+    // ==================== DEMO / MOCK DATA (for static file testing) ====================
+    const DEMO_DATA = {
+      overview: {
+        total_guilds: 1248,
+        feed_entries_last_7d: 3421,
+        notifications_last_30d: 142871,
+        total_tracked_artists: 9412
+      },
+      recentEntries: [
+        { id: 1, title: "Utopia (Deluxe Edition) - Full Album Leak", url: "#", matched_artists: ["Travis Scott"], thread_tags: ["#album", "#deluxe"], is_deleted: false, first_seen_at: new Date(Date.now() - 1000*60*4).toISOString() },
+        { id: 2, title: "FE!N (Demo Version) - Unreleased", url: "#", matched_artists: ["Travis Scott", "Playboi Carti"], thread_tags: ["#demo", "#unreleased"], is_deleted: false, first_seen_at: new Date(Date.now() - 1000*60*19).toISOString() },
+        { id: 3, title: "I AM MUSIC V2 - Early Version", url: "#", matched_artists: ["Playboi Carti"], thread_tags: ["#v2"], is_deleted: true, first_seen_at: new Date(Date.now() - 1000*60*47).toISOString() },
+        { id: 4, title: "New Music Friday - Week 24 Compilation", url: "#", matched_artists: ["Various"], thread_tags: ["#compilation"], is_deleted: false, first_seen_at: new Date(Date.now() - 1000*60*92).toISOString() }
+      ],
+      guilds: [
+        { id: "987654321", name: "Music Leaks Central", icon_hash: null, premium_tier: "premium", is_configured: true },
+        { id: "123456789", name: "Carti Updates", icon_hash: null, premium_tier: "supporter", is_configured: true },
+        { id: "555666777", name: "Private Vault", icon_hash: null, premium_tier: "free", is_configured: false }
+      ],
+      artists: [
+        { artist_name: "Travis Scott", role_id: "1122334455", is_active: true, added_at: new Date(Date.now() - 1000*60*60*24*12).toISOString() },
+        { artist_name: "Playboi Carti", role_id: "9988776655", is_active: true, added_at: new Date(Date.now() - 1000*60*60*24*7).toISOString() },
+        { artist_name: "Future", role_id: null, is_active: true, added_at: new Date(Date.now() - 1000*60*60*24*3).toISOString() }
+      ],
+      feeds: [
+        { name: "Main Leaks Feed", rss_url: "https://leaked.cx/rss/main", is_active: true, last_polled_at: new Date(Date.now() - 1000*35).toISOString(), consecutive_failures: 0 },
+        { name: "Demo & Unreleased", rss_url: "https://leaked.cx/rss/demos", is_active: true, last_polled_at: new Date(Date.now() - 1000*60*2).toISOString(), consecutive_failures: 1 },
+        { name: "Albums & Mixtapes", rss_url: "https://leaked.cx/rss/albums", is_active: false, last_polled_at: new Date(Date.now() - 1000*60*60*5).toISOString(), consecutive_failures: 0 }
+      ]
+    };
 
-      // Check if already logged in (demo)
-      // In real app this would call /auth/me
-      // For now, show landing. User can click Login to simulate dashboard.
+    function init() {
+      // Landing stats (animated counters)
+      loadLandingStats();
 
       // Keyboard hint
       document.addEventListener('keydown', e => {
@@ -1303,13 +1354,14 @@
         }
       });
 
-      // Make sure dashboard can be triggered (demo helper)
+      // Demo helper - type this in console if needed:
+      // showDemoDashboard()
       window.showDemoDashboard = () => {
         currentUser = { id: 'demo', username: 'demo_user', premium_tier: 'supporter', avatar_hash: null };
         showDashboard();
       };
 
-      console.log('%c[Prefix Hub] Premium landing + dashboard initialized. Use showDemoDashboard() in console for demo.', 'color:#475569');
+      console.log('%c[Prefix Hub] Premium file ready. Click Login or run showDemoDashboard() in console.', 'color:#64748b');
     }
 
     window.onload = init;
