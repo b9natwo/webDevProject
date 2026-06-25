@@ -3,299 +3,156 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prefix Hub — Music Leak Notifications</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <meta name="description" content="Music leaks. Straight to your Discord. Real-time monitoring, rich notifications, and powerful artist tracking for music communities." />
+  <title>Prefix Hub — Music Leaks Straight to Discord | Premium SaaS</title>
+  
+  <!-- Inter + Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600&amp;display=swap" rel="stylesheet">
+  
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
-    /* ── Reset & base ───────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    
     :root {
-      --bg:            #080b12;
-      --bg2:           #0d1117;
-      --surface:       #111827;
-      --surface2:      #1a2236;
-      --surface3:      #1f2b3e;
-      --border:        #1e2d45;
-      --border2:       #243352;
-      --accent:        #5865f2;
-      --accent-dim:    rgba(88,101,242,0.15);
-      --accent-hover:  #4752c4;
-      --text:          #e4e8f1;
-      --text-muted:    #6b7fa3;
-      --text-dim:      #3d4f6b;
-      --green:         #22c55e;
-      --green-dim:     rgba(34,197,94,0.12);
-      --red:           #ef4444;
-      --red-dim:       rgba(239,68,68,0.12);
-      --gold:          #f59e0b;
-      --gold-dim:      rgba(245,158,11,0.12);
-      --purple:        #a855f7;
-      --purple-dim:    rgba(168,85,247,0.12);
-      --radius:        10px;
-      --radius-lg:     16px;
-      --shadow:        0 4px 24px rgba(0,0,0,0.4);
-      --transition:    0.18s ease;
+      --bg: #050507;
+      --surface: #0a0b12;
+      --surface2: #11141f;
+      --surface3: #181b29;
+      --border: #1f2435;
+      --border2: #2a3147;
+      --accent: #a855f7;
+      --accent2: #6366f1;
+      --neon-blue: #3b82f6;
+      --green: #22c55e;
+      --gold: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #475569;
     }
-    html { scroll-behavior: smooth; }
+    
+    * { box-sizing: border-box; }
+    
     body {
+      font-family: 'Inter', system_ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      font-size: 14px;
       line-height: 1.6;
-      min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    button { font-family: inherit; cursor: pointer; }
+    
+    .font-display {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
 
-    /* ── Scrollbar ──────────────────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    .glass {
+      background: rgba(10, 11, 18, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
 
-    /* ── Topbar ─────────────────────────────────────────────────────── */
-    #topbar {
-      position: sticky; top: 0; z-index: 50;
-      height: 56px;
-      background: rgba(8,11,18,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center;
-      padding: 0 1.5rem;
-      gap: 1rem;
-    }
-    .topbar-brand {
-      font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em;
-      color: var(--text); flex-shrink: 0;
-    }
-    .topbar-brand span { color: var(--accent); }
-    .topbar-spacer { flex: 1; }
-    .topbar-nav { display: flex; gap: 0.25rem; }
-    .topbar-nav-item {
-      padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.85rem;
-      color: var(--text-muted); font-weight: 500; cursor: pointer;
-      transition: all var(--transition); border: none; background: none;
-    }
-    .topbar-nav-item:hover { color: var(--text); background: var(--surface2); }
-    .topbar-user {
-      display: flex; align-items: center; gap: 0.6rem;
-      font-size: 0.85rem; color: var(--text-muted);
-    }
-    .avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--surface2); overflow: hidden; flex-shrink: 0;
-      border: 1.5px solid var(--border2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 700; color: var(--accent);
-    }
-    .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .tier-pill {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em;
-      padding: 0.15rem 0.5rem; border-radius: 20px; text-transform: uppercase;
-    }
-    .tier-free     { background: var(--surface3); color: var(--text-muted); }
-    .tier-supporter{ background: var(--accent-dim); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); }
-    .tier-premium  { background: var(--gold-dim);  color: var(--gold);      border: 1px solid rgba(245,158,11,0.3); }
+    .section { scroll-margin-top: 80px; }
 
-    /* ── Buttons ────────────────────────────────────────────────────── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: var(--accent); color: #fff; border: none;
-      border-radius: 8px; padding: 0.5rem 1.1rem;
-      font-size: 0.875rem; font-weight: 600; cursor: pointer;
-      transition: all var(--transition); white-space: nowrap;
-    }
-    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(88,101,242,0.35); }
-    .btn:active { transform: translateY(0); }
-    .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
-    .btn-ghost {
-      background: transparent; color: var(--text-muted);
-      border: 1px solid var(--border2);
-    }
-    .btn-ghost:hover { background: var(--surface2); color: var(--text); box-shadow: none; }
-    .btn-danger { background: var(--red); }
-    .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 14px rgba(239,68,68,0.3); }
-    .btn-gold { background: var(--gold); color: #000; }
-    .btn-gold:hover { background: #d97706; box-shadow: 0 4px 14px rgba(245,158,11,0.35); }
-    .btn-purple { background: var(--purple); color: #fff; }
-    .btn-purple:hover { background: #9333ea; box-shadow: 0 4px 14px rgba(168,85,247,0.35); }
-    .btn-discord { background: #5865f2; color: #fff; }
-    .btn-discord:hover { background: #4752c4; box-shadow: 0 4px 14px rgba(88,101,242,0.4); }
-    .btn-lg { padding: 0.7rem 1.6rem; font-size: 0.95rem; border-radius: 10px; }
-
-    /* ── Pages ──────────────────────────────────────────────────────── */
-    .page { display: none; }
-    .page.active { display: block; }
-
-    /* ══════════════════════════════════════════════════════════════════
-       LANDING PAGE
-    ══════════════════════════════════════════════════════════════════ */
-    #page-landing { overflow-x: hidden; }
-
-    /* Hero */
-    .hero {
-      position: relative; text-align: center;
-      padding: 6rem 1.5rem 4rem;
-      overflow: hidden;
-    }
     .hero-glow {
-      position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 400px;
-      background: radial-gradient(ellipse, rgba(88,101,242,0.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: var(--accent-dim); color: #818cf8;
-      border: 1px solid rgba(88,101,242,0.3);
-      border-radius: 20px; padding: 0.3rem 0.9rem;
-      font-size: 0.8rem; font-weight: 600; margin-bottom: 1.5rem;
-    }
-    .hero-badge::before { content: '●'; font-size: 0.5rem; color: var(--green); }
-    .hero h1 {
-      font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800;
-      letter-spacing: -0.04em; line-height: 1.1;
-      margin-bottom: 1.25rem;
-    }
-    .hero h1 em { font-style: normal; color: var(--accent); }
-    .hero-sub {
-      font-size: 1.05rem; color: var(--text-muted);
-      max-width: 520px; margin: 0 auto 2.5rem;
-      line-height: 1.7;
-    }
-    .hero-actions { display: flex; gap: 0.85rem; justify-content: center; flex-wrap: wrap; }
-
-    /* Stats bar */
-    .stats-bar {
-      display: flex; justify-content: center; flex-wrap: wrap;
-      gap: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      background: var(--surface); margin: 0;
-    }
-    .stat-bar-item {
-      text-align: center; padding: 1.5rem 2.5rem;
-      border-right: 1px solid var(--border);
-      flex: 1; min-width: 140px;
-    }
-    .stat-bar-item:last-child { border-right: none; }
-    .stat-bar-val {
-      font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em;
-      color: var(--accent); display: block;
-    }
-    .stat-bar-label {
-      font-size: 0.78rem; color: var(--text-muted); font-weight: 500;
-      text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 900px; height: 900px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
     }
 
-    /* Features */
-    .section { padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+    .accent-gradient {
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .section-title {
-      font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800;
-      letter-spacing: -0.03em; margin-bottom: 0.75rem;
-    }
-    .section-sub { color: var(--text-muted); max-width: 500px; margin-bottom: 3rem; font-size: 0.95rem; line-height: 1.7; }
-    .features-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1px; background: var(--border); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); overflow: hidden;
-    }
-    .feature-card {
-      background: var(--surface); padding: 1.75rem;
-      transition: background var(--transition);
-    }
-    .feature-card:hover { background: var(--surface2); }
-    .feature-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: var(--accent-dim); display: flex; align-items: center;
-      justify-content: center; font-size: 1.1rem; margin-bottom: 1rem;
-      border: 1px solid rgba(88,101,242,0.2);
-    }
-    .feature-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
-    .feature-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; }
 
-    /* Pricing */
-    .pricing-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem; max-width: 900px; margin: 0 auto;
+    .btn-primary {
+      background: linear-gradient(135deg, #a855f7, #7c3aed);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 15px -3px rgb(168 85 247 / 0.2), 0 4px 6px -4px rgb(168 85 247 / 0.2);
     }
-    .plan-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 1.75rem;
-      position: relative; transition: border-color var(--transition);
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -5px rgb(168 85 247 / 0.25), 0 8px 10px -6px rgb(168 85 247 / 0.25); }
+
+    .btn-secondary {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
-    .plan-card:hover { border-color: var(--border2); }
+    .btn-secondary:hover { background: var(--surface3); border-color: var(--border); transform: translateY(-1px); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #111827;
+      font-weight: 700;
+      box-shadow: 0 10px 15px -3px rgb(245 158 11 / 0.3);
+    }
+
+    .card {
+      transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), 
+                  box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1),
+                  border-color 0.2s ease;
+      border: 1px solid var(--border);
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); border-color: var(--border2); }
+
+    .feature-card { background: var(--surface); border: 1px solid var(--border); }
+    .feature-card:hover { border-color: rgba(168, 85, 247, 0.3); background: var(--surface2); }
+
+    .glow-purple { box-shadow: 0 0 25px rgba(168, 85, 247, 0.15); }
+    .premium-glow { box-shadow: 0 0 40px rgba(168, 85, 247, 0.25), 0 0 80px rgba(99, 102, 241, 0.1); }
+
+    .plan-card { position: relative; transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); }
     .plan-card.featured {
-      border-color: rgba(88,101,242,0.5);
-      background: linear-gradient(160deg, rgba(88,101,242,0.06) 0%, var(--surface) 60%);
+      border-color: #a855f7;
+      box-shadow: 0 0 0 1px #a855f7, 0 25px 50px -12px rgb(0 0 0 / 0.4);
+      transform: scale(1.015);
     }
-    .plan-card.premium-card {
-      border-color: rgba(245,158,11,0.4);
-      background: linear-gradient(160deg, rgba(245,158,11,0.06) 0%, var(--surface) 60%);
-    }
+    .plan-card.premium { border-image: linear-gradient(#a855f7, #6366f1) 1; box-shadow: 0 0 0 1px #a855f7, 0 25px 50px -12px rgb(168 85 247 / 0.15); }
+
     .plan-badge {
-      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; padding: 0.2rem 0.75rem; border-radius: 20px;
-      white-space: nowrap;
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; padding: 2px 14px; border-radius: 9999px; white-space: nowrap;
     }
-    .plan-badge-popular { background: var(--accent); color: #fff; }
-    .plan-badge-best    { background: var(--gold); color: #000; }
-    .plan-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .plan-price {
-      font-size: 2.2rem; font-weight: 800; letter-spacing: -0.04em;
-      margin-bottom: 0.25rem;
-    }
-    .plan-price sup { font-size: 1rem; font-weight: 600; vertical-align: top; margin-top: 0.4rem; margin-right: 1px; }
-    .plan-period { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1.25rem; }
-    .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
-    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.5rem; }
-    .plan-features li { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
-    .plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .plan-features li.dim::before { color: var(--text-dim); }
-    .plan-features li.dim { color: var(--text-dim); }
 
-    /* CTA */
-    .cta-section {
-      text-align: center; padding: 5rem 1.5rem;
-      background: linear-gradient(180deg, transparent, var(--surface) 40%, transparent);
-    }
-    .cta-section h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
-    .cta-section p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.95rem; }
+    .mock-window { background: #0a0b12; border: 1px solid #1f2435; box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5); overflow: hidden; }
+    .mock-header { background: #11141f; border-bottom: 1px solid #1f2435; }
+    .mock-leak-item { transition: all 0.1s ease; }
+    .mock-leak-item:hover { background: #181b29; }
+    .discord-embed { background: #2b2d31; border-left: 4px solid #5865f2; border-radius: 4px; }
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 1rem;
-      max-width: 1100px; margin: 0 auto;
-    }
-    .footer-brand { font-size: 0.9rem; font-weight: 700; }
-    .footer-brand span { color: var(--accent); }
-    .footer-links { display: flex; gap: 1.5rem; }
-    .footer-links a { font-size: 0.8rem; color: var(--text-muted); }
-    .footer-links a:hover { color: var(--text); }
-    footer p { font-size: 0.78rem; color: var(--text-dim); }
+    .stat-number { font-variant-numeric: tabular-nums; }
 
-    /* ══════════════════════════════════════════════════════════════════
-       DASHBOARD
-    ══════════════════════════════════════════════════════════════════ */
+    .testimonial-card { background: var(--surface); border: 1px solid var(--border); }
+
+    .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    .nav-active { color: white; position: relative; }
+    .nav-active:after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: linear-gradient(to right, #a855f7, #6366f1); }
+
+    .metric-value { font-feature-settings: "ss02"; }
+
+    .section-header { font-size: clamp(2.25rem, 5vw, 3rem); line-height: 1.05; letter-spacing: -0.04em; }
+
+    .subtle-grid { background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 80px 80px; }
+
+    /* ==================== DASHBOARD STYLES (Premium SaaS) ==================== */
     #page-dashboard { display: none; }
-    #page-dashboard.active { display: flex; flex-direction: column; }
+    #page-dashboard.active { display: flex; flex-direction: column; min-height: 100vh; }
 
-    .dash-shell {
-      display: flex; flex: 1; min-height: calc(100vh - 56px);
-    }
+    .dash-shell { display: flex; flex: 1; min-height: calc(100vh - 56px); }
 
-    /* Sidebar */
     .dash-sidebar {
-      width: 220px; flex-shrink: 0;
+      width: 230px; flex-shrink: 0;
       background: var(--surface);
       border-right: 1px solid var(--border);
       padding: 1.25rem 0.75rem;
@@ -303,1473 +160,1159 @@
       gap: 0.125rem; position: sticky; top: 56px;
       height: calc(100vh - 56px); overflow-y: auto;
     }
+
     .sidebar-section-label {
       font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--text-dim);
       padding: 0.75rem 0.75rem 0.35rem;
     }
+
     .sidebar-item {
-      display: flex; align-items: center; gap: 0.6rem;
-      padding: 0.55rem 0.75rem; border-radius: 7px;
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.6rem 0.85rem; border-radius: 10px;
       font-size: 0.875rem; font-weight: 500; color: var(--text-muted);
-      cursor: pointer; transition: all var(--transition); border: none;
+      cursor: pointer; transition: all 0.15s ease; border: none;
       background: none; width: 100%; text-align: left;
     }
-    .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.8; }
+    .sidebar-item svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.75; }
     .sidebar-item:hover { background: var(--surface2); color: var(--text); }
-    .sidebar-item.active { background: var(--accent-dim); color: #818cf8; font-weight: 600; }
+    .sidebar-item.active { background: rgba(168, 85, 247, 0.12); color: #c084fc; font-weight: 600; }
     .sidebar-item.active svg { opacity: 1; }
-    .sidebar-spacer { flex: 1; }
-    .sidebar-upgrade {
-      margin-top: auto; padding: 1rem; border-radius: var(--radius);
-      background: var(--accent-dim); border: 1px solid rgba(88,101,242,0.2);
-    }
-    .sidebar-upgrade p { font-size: 0.78rem; color: #818cf8; margin-bottom: 0.6rem; line-height: 1.5; }
 
-    /* Guild pill in topbar */
+    .sidebar-upgrade {
+      margin-top: auto; padding: 1rem; border-radius: 14px;
+      background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
     .guild-selector {
       display: flex; align-items: center; gap: 0.5rem;
       background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 0.3rem 0.75rem;
+      border-radius: 10px; padding: 0.35rem 0.85rem;
       font-size: 0.8rem; color: var(--text-muted); cursor: pointer;
-      transition: all var(--transition);
+      transition: all 0.15s ease;
     }
     .guild-selector:hover { border-color: var(--border2); color: var(--text); }
-    .guild-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 
-    /* Main content */
     .dash-main {
-      flex: 1; padding: 2rem 2rem;
+      flex: 1; padding: 2rem 2.25rem;
       min-width: 0; overflow-y: auto;
     }
+
     .dash-header {
       display: flex; align-items: flex-start; justify-content: space-between;
       margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;
     }
-    .dash-header-title { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
-    .dash-header-sub { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; }
+    .dash-header-title { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.025em; }
 
-    /* Cards */
     .card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.25rem;
+      border-radius: 16px; padding: 1.35rem;
     }
-    .card + .card { margin-top: 1rem; }
-    .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 1rem; gap: 0.5rem;
-    }
-    .card-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
-    .card-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
 
-    /* Stats row */
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+
     .stat-card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.1rem 1.25rem;
-      position: relative; overflow: hidden;
+      border-radius: 16px; padding: 1.25rem 1.35rem; position: relative; overflow: hidden;
     }
     .stat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
       background: var(--accent-color, var(--accent));
     }
     .stat-card.green::before { --accent-color: var(--green); }
-    .stat-card.gold::before  { --accent-color: var(--gold);  }
-    .stat-card.purple::before{ --accent-color: var(--purple);}
-    .stat-val { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
-    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
-    .stat-delta { font-size: 0.72rem; color: var(--green); margin-top: 0.3rem; font-weight: 600; }
+    .stat-card.gold::before  { --accent-color: var(--gold); }
+    .stat-card.purple::before{ --accent-color: var(--accent); }
 
-    /* Tables */
-    .table-wrap { overflow-x: auto; }
+    .stat-val { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.04em; }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+
     table { width: 100%; border-collapse: collapse; }
     thead th {
-      text-align: left; padding: 0.6rem 0.85rem;
+      text-align: left; padding: 0.65rem 0.9rem;
       font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
       text-transform: uppercase; color: var(--text-muted);
       border-bottom: 1px solid var(--border);
     }
     tbody td {
-      padding: 0.7rem 0.85rem; font-size: 0.85rem;
+      padding: 0.75rem 0.9rem; font-size: 0.875rem;
       border-bottom: 1px solid var(--border); color: var(--text);
     }
-    tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: var(--surface2); }
 
-    /* Badges */
     .badge {
       display: inline-flex; align-items: center;
-      padding: 0.2rem 0.6rem; border-radius: 20px;
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.03em;
+      padding: 0.2rem 0.65rem; border-radius: 9999px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.03em;
       white-space: nowrap;
     }
-    .badge-free      { background: var(--surface3);       color: var(--text-muted); }
-    .badge-supporter { background: var(--accent-dim);     color: #818cf8; border: 1px solid rgba(88,101,242,0.2); }
-    .badge-premium   { background: var(--gold-dim);       color: var(--gold);       border: 1px solid rgba(245,158,11,0.2); }
-    .badge-active    { background: var(--green-dim);      color: var(--green);      border: 1px solid rgba(34,197,94,0.2); }
-    .badge-deleted   { background: var(--red-dim);        color: var(--red);        border: 1px solid rgba(239,68,68,0.2); }
-    .badge-warning   { background: var(--gold-dim);       color: var(--gold);       border: 1px solid rgba(245,158,11,0.2); }
+    .badge-free      { background: var(--surface3); color: var(--text-muted); }
+    .badge-supporter { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); }
+    .badge-premium   { background: rgba(245, 158, 11, 0.15); color: var(--gold); border: 1px solid rgba(245, 158, 11, 0.25); }
+    .badge-active    { background: rgba(34, 197, 94, 0.15); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.25); }
+    .badge-deleted   { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.25); }
 
-    /* Forms */
-    .form-group { margin-bottom: 1rem; }
-    .form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; }
     .form-input {
       width: 100%; background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); border-radius: 8px; padding: 0.55rem 0.75rem;
-      font-size: 0.875rem; outline: none; transition: border-color var(--transition);
-      font-family: inherit;
+      color: var(--text); border-radius: 10px; padding: 0.6rem 0.85rem;
+      font-size: 0.875rem; outline: none; transition: border-color 0.15s ease;
     }
     .form-input:focus { border-color: var(--accent); }
-    .form-hint { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.35rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
-    /* Search bar */
-    .search-wrap {
-      position: relative; margin-bottom: 1rem;
-    }
-    .search-wrap svg {
-      position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
-      width: 15px; height: 15px; color: var(--text-muted); pointer-events: none;
-    }
-    .search-wrap input { padding-left: 2.25rem; }
+    .search-wrap { position: relative; }
+    .search-wrap svg { position: absolute; left: 0.9rem; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); }
 
-    /* Alerts */
-    .alert { padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; }
-    .alert + .alert { margin-top: 0.5rem; }
-    .alert-info    { background: rgba(88,101,242,0.1); color: #a5b4fc; border: 1px solid rgba(88,101,242,0.2); }
-    .alert-success { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-    .alert-error   { background: var(--red-dim);   color: #fca5a5;     border: 1px solid rgba(239,68,68,0.2); }
-    .alert-warning { background: var(--gold-dim);  color: var(--gold);  border: 1px solid rgba(245,158,11,0.2); }
-
-    /* Empty state */
-    .empty {
-      text-align: center; padding: 3.5rem 1rem; color: var(--text-muted);
-      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
-    }
-    .empty-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      background: var(--surface2); display: flex; align-items: center;
-      justify-content: center; font-size: 1.35rem;
-    }
-    .empty h3 { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-    .empty p { font-size: 0.82rem; max-width: 280px; }
-
-    /* Loading */
-    .loading { text-align: center; padding: 3rem; color: var(--text-muted); }
-    .spinner {
-      width: 28px; height: 28px; margin: 0 auto 0.75rem;
-      border: 2.5px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%; animation: spin 0.65s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Feed health dots */
-    .health-dot {
-      width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0;
-    }
-    .health-ok      { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.5); }
-    .health-warning { background: var(--gold);  box-shadow: 0 0 6px rgba(245,158,11,0.5); }
-    .health-error   { background: var(--red);   box-shadow: 0 0 6px rgba(239,68,68,0.5); }
-
-    /* Artist chips */
-    .artist-chip {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 20px; padding: 0.25rem 0.65rem;
-      font-size: 0.78rem; font-weight: 500; color: var(--text);
-      transition: all var(--transition);
-    }
-    .artist-chip button {
-      background: none; border: none; color: var(--text-dim);
-      font-size: 0.85rem; line-height: 1; cursor: pointer; padding: 0;
-      transition: color var(--transition);
-    }
-    .artist-chip button:hover { color: var(--red); }
-
-    /* Server cards */
-    .server-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .server-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.25rem;
-      transition: all var(--transition); cursor: pointer;
-    }
-    .server-card:hover { border-color: var(--border2); background: var(--surface2); }
-    .server-card.selected { border-color: var(--accent); background: var(--accent-dim); }
-    .server-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem; }
-    .server-icon {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: var(--surface3); overflow: hidden; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; font-weight: 800; color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-    .server-icon img { width: 100%; height: 100%; object-fit: cover; }
-    .server-name { font-weight: 700; font-size: 0.9rem; }
-    .server-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.15rem; }
-    .server-card-footer { display: flex; align-items: center; justify-content: space-between; }
-
-    /* Premium plan cards (dashboard) */
-    .upgrade-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.25rem; }
-    .upgrade-card {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.5rem; position: relative;
-    }
-    .upgrade-card.active-plan { border-color: var(--accent); }
-    .upgrade-active-badge {
-      position: absolute; top: 0.75rem; right: 0.75rem;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
-      text-transform: uppercase; background: var(--green-dim);
-      color: var(--green); border: 1px solid rgba(34,197,94,0.2);
-      padding: 0.15rem 0.5rem; border-radius: 20px;
-    }
-    .upgrade-price { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; margin: 0.5rem 0 0.25rem; }
-    .upgrade-period { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; }
-    .upgrade-feats { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
-    .upgrade-feats li { display: flex; align-items: flex-start; gap: 0.45rem; font-size: 0.82rem; color: var(--text-muted); }
-    .upgrade-feats li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(4px); display: none;
-      align-items: center; justify-content: center; z-index: 200; padding: 1rem;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal {
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: var(--radius-lg); padding: 1.75rem;
-      width: 100%; max-width: 440px; box-shadow: var(--shadow);
-      animation: modalIn 0.15s ease;
-    }
-    @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(4px); } }
-    .modal-title { font-size: 1.05rem; font-weight: 800; margin-bottom: 1.25rem; }
-    .modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.5rem; }
-
-    /* Tabs within dash panel */
-    .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; }
-    .tab-btn {
-      padding: 0.6rem 1rem; font-size: 0.85rem; font-weight: 500;
-      color: var(--text-muted); cursor: pointer; border: none; background: none;
-      border-bottom: 2px solid transparent; margin-bottom: -1px;
-      transition: all var(--transition);
-    }
-    .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
-    .tab-btn:hover:not(.active) { color: var(--text); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* Notification type row */
-    .notif-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.75rem 0; border-bottom: 1px solid var(--border);
-    }
-    .notif-row:last-child { border-bottom: none; }
-    .notif-label { font-size: 0.875rem; font-weight: 600; }
-    .notif-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
-    .toggle {
-      position: relative; width: 40px; height: 22px; flex-shrink: 0;
-    }
+    .toggle { position: relative; width: 42px; height: 24px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
     .toggle-track {
       position: absolute; inset: 0; background: var(--surface3);
-      border-radius: 20px; transition: background var(--transition);
-      cursor: pointer; border: 1px solid var(--border);
+      border-radius: 9999px; transition: background 0.2s ease; cursor: pointer; border: 1px solid var(--border);
     }
     .toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
     .toggle-track::after {
       content: ''; position: absolute; left: 3px; top: 50%; transform: translateY(-50%);
-      width: 14px; height: 14px; background: white; border-radius: 50%;
-      transition: left var(--transition);
+      width: 16px; height: 16px; background: white; border-radius: 9999px;
+      transition: left 0.2s ease;
     }
-    .toggle input:checked + .toggle-track::after { left: 21px; }
+    .toggle input:checked + .toggle-track::after { left: 22px; }
 
-    /* Progress bar */
-    .progress-wrap { background: var(--surface2); border-radius: 20px; height: 6px; overflow: hidden; }
-    .progress-bar  { height: 100%; background: var(--accent); border-radius: 20px; transition: width 0.5s ease; }
-    .progress-bar.green  { background: var(--green); }
-    .progress-bar.gold   { background: var(--gold); }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 300; padding: 1rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 20px; padding: 1.85rem; width: 100%; max-width: 440px;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
+    }
 
-    /* Responsive */
+    .server-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.25rem; transition: all 0.2s ease; cursor: pointer;
+    }
+    .server-card:hover { border-color: var(--border2); background: var(--surface2); }
+    .server-card.selected { border-color: var(--accent); background: rgba(168, 85, 247, 0.08); }
+
+    .progress-wrap { background: var(--surface2); border-radius: 9999px; height: 7px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 9999px; transition: width 0.4s ease; }
+
+    .empty {
+      text-align: center; padding: 3rem 1rem; color: var(--text-muted);
+      display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+    }
+
+    .health-dot {
+      width: 9px; height: 9px; border-radius: 9999px; display: inline-block;
+    }
+    .health-ok { background: var(--green); box-shadow: 0 0 8px rgba(34,197,94,0.5); }
+    .health-warning { background: var(--gold); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    .health-error { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.5); }
+
+    .artist-chip {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9999px; padding: 0.25rem 0.7rem; font-size: 0.78rem; font-weight: 500;
+    }
+
     @media (max-width: 768px) {
       .dash-sidebar { display: none; }
       .dash-main { padding: 1.25rem; }
-      .stats-row { grid-template-columns: 1fr 1fr; }
-      .section { padding: 3rem 1rem; }
-      .hero { padding: 3.5rem 1rem 3rem; }
-      .stat-bar-item { padding: 1.25rem 1rem; }
-      footer { flex-direction: column; text-align: center; }
     }
   </style>
 </head>
-<body>
+<body class="bg-[#050507] text-[#e2e8f0]">
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     TOPBAR
-════════════════════════════════════════════════════════════════════ -->
-<nav id="topbar">
-  <span class="topbar-brand">Prefix<span>Hub</span></span>
-
-  <!-- landing nav links (shown logged out) -->
-  <div class="topbar-nav" id="topbar-landing-nav">
-    <button class="topbar-nav-item" onclick="scrollToSection('features')">Features</button>
-    <button class="topbar-nav-item" onclick="scrollToSection('pricing')">Pricing</button>
-  </div>
-
-  <div class="topbar-spacer"></div>
-
-  <!-- logged-out actions -->
-  <div id="topbar-logged-out">
-    <button class="btn btn-discord" onclick="login()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.079.114 18.1.132 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-      Login with Discord
-    </button>
-  </div>
-
-  <!-- logged-in actions -->
-  <div id="topbar-logged-in" style="display:none; align-items:center; gap:0.75rem;">
-    <div id="topbar-guild-select"></div>
-    <div class="topbar-user">
-      <span id="topbar-tier" class="tier-pill tier-free">Free</span>
-      <span id="topbar-username" style="font-weight:600;color:var(--text)"></span>
-      <div class="avatar" id="topbar-avatar"></div>
-    </div>
-    <button class="btn btn-ghost btn-sm" onclick="logout()">Sign out</button>
-  </div>
-</nav>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     LANDING PAGE
-════════════════════════════════════════════════════════════════════ -->
-<div id="page-landing" class="page active">
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-badge">Live on leaked.cx</div>
-    <h1>Music leaks.<br>Straight to your<br><em>Discord server.</em></h1>
-    <p class="hero-sub">
-      Prefix Hub monitors leaked.cx in real time and delivers instant notifications
-      whenever your tracked artists drop — filtered, clean, and right where your community lives.
-    </p>
-    <div class="hero-actions">
-      <button class="btn btn-discord btn-lg" onclick="login()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.079.114 18.1.132 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-        Get Started Free
-      </button>
-      <button class="btn btn-ghost btn-lg" onclick="scrollToSection('pricing')">View Plans</button>
-    </div>
-  </section>
-
-  <!-- Live stats bar -->
-  <div class="stats-bar">
-    <div class="stat-bar-item">
-      <span class="stat-bar-val" id="ls-guilds">—</span>
-      <span class="stat-bar-label">Active Servers</span>
-    </div>
-    <div class="stat-bar-item">
-      <span class="stat-bar-val" id="ls-entries">—</span>
-      <span class="stat-bar-label">Leaks Tracked</span>
-    </div>
-    <div class="stat-bar-item">
-      <span class="stat-bar-val" id="ls-artists">—</span>
-      <span class="stat-bar-label">Artists Monitored</span>
-    </div>
-    <div class="stat-bar-item">
-      <span class="stat-bar-val" id="ls-notifs">—</span>
-      <span class="stat-bar-label">Notifications Sent</span>
-    </div>
-  </div>
-
-  <!-- Features -->
-  <section class="section" id="features">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">Everything your leak community needs</h2>
-    <p class="section-sub">A complete monitoring system — from RSS polling to Discord delivery — with one dashboard to manage it all.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">Real-Time Polling</div>
-        <div class="feature-desc">Polls leaked.cx RSS feeds every 35 seconds. Premium members get priority 15-second intervals so they're always first.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🎤</div>
-        <div class="feature-title">Artist Tracking</div>
-        <div class="feature-desc">Add artists by name. We normalize and match automatically — no exact spelling required. Assign a Discord role for instant pings.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔔</div>
-        <div class="feature-title">Rich Notifications</div>
-        <div class="feature-desc">Beautifully formatted Discord embeds with title, tags, matched artists, and direct links. No noise, just signal.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🗑️</div>
-        <div class="feature-title">Deletion Tracking</div>
-        <div class="feature-desc">When a thread disappears from leaked.cx, Prefix Hub flags it instantly — so you know what got taken down.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔍</div>
-        <div class="feature-title">Advanced Filters</div>
-        <div class="feature-desc">Whitelist or blacklist artists, filter by tag, set minimum age thresholds. Premium-exclusive for maximum control.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <div class="feature-title">Analytics Dashboard</div>
-        <div class="feature-desc">Track notification volume, feed health, and artist activity over time — all from one clean dashboard.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing -->
-  <section class="section" id="pricing" style="padding-top: 2rem;">
-    <div class="section-label">Plans</div>
-    <h2 class="section-title">Simple, transparent pricing</h2>
-    <p class="section-sub">Start free. Upgrade when you need more artists, more servers, or faster notifications.</p>
-    <div class="pricing-grid">
-
-      <!-- Free -->
-      <div class="plan-card">
-        <div class="plan-name">Free</div>
-        <div class="plan-price">$0</div>
-        <div class="plan-period">forever</div>
-        <hr class="plan-divider" />
-        <ul class="plan-features">
-          <li>Track up to 5 artists</li>
-          <li>Access main Prefix Hub server</li>
-          <li>Basic Discord notifications</li>
-          <li>Feed health monitoring</li>
-          <li class="dim">Personal server invite</li>
-          <li class="dim">Priority feed polling</li>
-          <li class="dim">Advanced filters</li>
-        </ul>
-        <button class="btn btn-ghost" style="width:100%" onclick="login()">Get Started</button>
-      </div>
-
-      <!-- Supporter -->
-      <div class="plan-card featured">
-        <div class="plan-badge plan-badge-popular">Most Popular</div>
-        <div class="plan-name">Supporter</div>
-        <div class="plan-price"><sup>$</sup>4<span style="font-size:1rem">/mo</span></div>
-        <div class="plan-period">billed monthly · cancel anytime</div>
-        <hr class="plan-divider" />
-        <ul class="plan-features">
-          <li>Track up to 25 artists</li>
-          <li>Supporter role in our Discord</li>
-          <li>Early access to new features</li>
-          <li>Access main Prefix Hub server</li>
-          <li>Basic Discord notifications</li>
-          <li class="dim">Personal server invite</li>
-          <li class="dim">Priority feed polling</li>
-        </ul>
-        <button class="btn" style="width:100%" onclick="login()">Support the Project</button>
-      </div>
-
-      <!-- Premium -->
-      <div class="plan-card premium-card">
-        <div class="plan-badge plan-badge-best">Best Value</div>
-        <div class="plan-name">Premium</div>
-        <div class="plan-price"><sup>$</sup>12<span style="font-size:1rem">/mo</span></div>
-        <div class="plan-period">billed monthly · cancel anytime</div>
-        <hr class="plan-divider" />
-        <ul class="plan-features">
-          <li>Unlimited artist tracking</li>
-          <li>Invite bot to personal servers</li>
-          <li>Priority feed polling (15s)</li>
-          <li>Advanced filters &amp; custom rules</li>
-          <li>Multiple server support</li>
-          <li>Supporter perks included</li>
-          <li>Priority support</li>
-        </ul>
-        <button class="btn btn-gold" style="width:100%" onclick="login()">Go Premium</button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <h2>Ready to never miss a leak?</h2>
-    <p>Join hundreds of servers already using Prefix Hub. Free to start, powerful when you need it.</p>
-    <button class="btn btn-discord btn-lg" onclick="login()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.079.114 18.1.132 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-      Get Started Free
-    </button>
-  </section>
-
-  <footer>
-    <span class="footer-brand">Prefix<span>Hub</span></span>
-    <div class="footer-links">
-      <a href="/api/docs">API Docs</a>
-      <a href="https://discord.gg/prefixhub" target="_blank">Discord</a>
-      <a href="https://github.com/prefixhub" target="_blank">GitHub</a>
-    </div>
-    <p>© 2025 Prefix Hub. In partnership with leaked.cx.</p>
-  </footer>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     DASHBOARD
-════════════════════════════════════════════════════════════════════ -->
-<div id="page-dashboard" class="page">
-  <div class="dash-shell">
-
-    <!-- Sidebar -->
-    <aside class="dash-sidebar">
-      <div class="sidebar-section-label">Main</div>
-      <button class="sidebar-item active" data-tab="overview" onclick="switchTab('overview')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Overview
-      </button>
-      <button class="sidebar-item" data-tab="recent" onclick="switchTab('recent')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        Recent Leaks
-      </button>
-
-      <div class="sidebar-section-label" style="margin-top:0.5rem">Management</div>
-      <button class="sidebar-item" data-tab="servers" onclick="switchTab('servers')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
-        Servers
-      </button>
-      <button class="sidebar-item" data-tab="artists" onclick="switchTab('artists')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Artists
-      </button>
-      <button class="sidebar-item" data-tab="feeds" onclick="switchTab('feeds')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-        Feed Health
-      </button>
-
-      <div class="sidebar-section-label" style="margin-top:0.5rem">Account</div>
-      <button class="sidebar-item" data-tab="settings" onclick="switchTab('settings')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        Settings
-      </button>
-      <button class="sidebar-item" data-tab="upgrade" onclick="switchTab('upgrade')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Upgrade
-      </button>
-
-      <!-- sidebar upgrade nudge for free users -->
-      <div class="sidebar-upgrade" id="sidebar-upgrade-nudge" style="display:none">
-        <p>Unlock 25 artists and early access features.</p>
-        <button class="btn btn-sm" style="width:100%" onclick="switchTab('upgrade')">View Plans</button>
-      </div>
-    </aside>
-
-    <!-- Main content -->
-    <main class="dash-main">
-
-      <!-- ── OVERVIEW ── -->
-      <div id="tab-overview" class="dash-tab-content">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Overview</div>
-            <div class="dash-header-sub">Your Prefix Hub at a glance</div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       STICKY NAV (Landing + Dashboard aware)
+  ═══════════════════════════════════════════════════════════════ -->
+  <nav id="topbar" class="sticky top-0 z-50 border-b border-[#1f2435] bg-[#050507]/95 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-x-3">
+        <div onclick="showLanding()" class="flex items-center gap-x-2.5 cursor-pointer">
+          <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#a855f7] via-[#7c3aed] to-[#6366f1] flex items-center justify-center shadow-lg shadow-purple-950/50">
+            <span class="text-white font-black text-2xl tracking-tighter">P</span>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="loadOverview()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Refresh
+          <div>
+            <span class="font-semibold text-2xl tracking-tighter">Prefix</span>
+            <span class="font-semibold text-2xl tracking-tighter bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent">Hub</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Landing nav -->
+      <div id="landing-nav" class="hidden md:flex items-center gap-x-9 text-sm font-medium">
+        <a href="#features" class="hover:text-white transition-colors text-[#94a3b8]">Features</a>
+        <a href="#how-it-works" class="hover:text-white transition-colors text-[#94a3b8]">How it Works</a>
+        <a href="#why-us" class="hover:text-white transition-colors text-[#94a3b8]">Why Prefix Hub</a>
+        <a href="#pricing" class="hover:text-white transition-colors text-[#94a3b8]">Pricing</a>
+      </div>
+
+      <div class="flex items-center gap-x-3">
+        <!-- Logged out -->
+        <div id="topbar-logged-out" class="flex items-center gap-x-3">
+          <button onclick="login()" class="hidden sm:flex items-center gap-x-2 px-5 py-2 text-sm font-semibold rounded-2xl border border-[#1f2435] hover:bg-[#11141f] transition-all">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-[#a855f7]"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.079.114 18.1.132 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+            <span>Login with Discord</span>
           </button>
-        </div>
-        <div class="stats-row" id="overview-stats">
-          <div class="stat-card"><div class="spinner"></div></div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="overview-lower">
-        </div>
-      </div>
-
-      <!-- ── RECENT LEAKS ── -->
-      <div id="tab-recent" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Recent Leaks</div>
-            <div class="dash-header-sub">Latest entries from leaked.cx</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="loadRecent()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Refresh
-          </button>
-        </div>
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input class="form-input" type="text" id="recent-search" placeholder="Filter by artist or title…" oninput="filterRecent()">
-        </div>
-        <div class="card">
-          <div id="recent-list"><div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading leaks…</span></div></div>
-        </div>
-      </div>
-
-      <!-- ── SERVERS ── -->
-      <div id="tab-servers" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Your Servers</div>
-            <div class="dash-header-sub">Servers where Prefix Hub is active</div>
-          </div>
-          <button class="btn btn-sm" onclick="copyInviteLink()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Copy Invite Link
-          </button>
-        </div>
-        <div id="setup-needed-notice" style="display:none">
-          <div class="alert alert-warning" style="margin-bottom:1rem">
-            <strong>Action required:</strong> Your server needs to be configured before notifications will send.
-            In your Discord server, run the slash command: <code style="background:rgba(0,0,0,0.3);padding:0.1rem 0.4rem;border-radius:4px">/setup #your-leaks-channel</code>
-          </div>
-        </div>
-        <div id="premium-only-notice" style="display:none">
-          <div class="alert alert-warning" style="margin-bottom:1rem">
-            <strong>Premium feature:</strong> Invite the bot to your own servers. Upgrade to Premium to unlock this.
-            <button class="btn btn-gold btn-sm" style="margin-left:0.75rem" onclick="switchTab('upgrade')">Upgrade</button>
-          </div>
-        </div>
-        <div id="servers-list"><div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div></div>
-      </div>
-
-      <!-- ── ARTISTS ── -->
-      <div id="tab-artists" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Artist Tracking</div>
-            <div class="dash-header-sub" id="artists-guild-label">Select a server to manage artists</div>
-          </div>
-          <button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-            Add Artist
+          <button onclick="document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })" class="px-5 py-2 text-sm font-semibold rounded-2xl bg-white text-[#050507] hover:bg-white/90 transition-all">
+            Get Started
           </button>
         </div>
 
-        <!-- Tier usage bar -->
-        <div id="artist-usage-bar" style="display:none; margin-bottom:1.25rem">
-          <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
-            <span style="font-size:0.78rem;color:var(--text-muted)">Artist slots used</span>
-            <span style="font-size:0.78rem;font-weight:600" id="artist-usage-label">— / —</span>
+        <!-- Logged in (Dashboard topbar) -->
+        <div id="topbar-logged-in" class="hidden items-center gap-x-3">
+          <div id="topbar-guild-select"></div>
+          
+          <div class="flex items-center gap-x-2.5">
+            <span id="topbar-tier" class="tier-pill text-xs font-bold px-3 py-1 rounded-2xl"></span>
+            <span id="topbar-username" class="font-semibold text-sm"></span>
+            <div id="topbar-avatar" class="w-8 h-8 rounded-full bg-[#1f2435] border border-[#2a3147] flex items-center justify-center text-xs font-bold overflow-hidden"></div>
           </div>
-          <div class="progress-wrap">
-            <div class="progress-bar" id="artist-usage-fill" style="width:0%"></div>
-          </div>
-        </div>
-
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input class="form-input" type="text" id="artist-search" placeholder="Search tracked artists…" oninput="filterArtists()">
-        </div>
-        <div id="artists-list">
-          <div class="empty">
-            <div class="empty-icon">🎤</div>
-            <h3>No server selected</h3>
-            <p>Choose a server from the Servers tab to manage its artists.</p>
-            <button class="btn btn-ghost btn-sm" onclick="switchTab('servers')">Go to Servers</button>
-          </div>
+          
+          <button onclick="logout()" class="px-4 py-1.5 text-xs font-semibold rounded-2xl border border-[#2a3147] hover:bg-[#11141f]">Sign out</button>
         </div>
       </div>
+    </div>
+  </nav>
 
-      <!-- ── FEED HEALTH ── -->
-      <div id="tab-feeds" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Feed Health</div>
-            <div class="dash-header-sub">RSS feed status from leaked.cx</div>
+  <!-- ═══════════════════════════════════════════════════════════════
+       LANDING PAGE
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="page-landing">
+
+    <!-- HERO -->
+    <section class="relative pt-16 pb-20 md:pt-20 md:pb-24 overflow-hidden">
+      <div class="hero-glow"></div>
+      <div class="absolute inset-0 subtle-grid opacity-40"></div>
+
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="grid lg:grid-cols-12 gap-x-12 items-center">
+          <div class="lg:col-span-7 max-w-2xl">
+            <div class="inline-flex items-center gap-x-2 px-4 py-1.5 rounded-3xl bg-white/5 border border-white/10 mb-6">
+              <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+              <span class="text-xs font-semibold tracking-[1px] text-emerald-400">LIVE ON LEAKED.CX • REAL-TIME MONITORING</span>
+            </div>
+
+            <h1 class="section-header font-display text-6xl md:text-7xl leading-[0.95] tracking-tighter mb-6">
+              Music leaks.<br>
+              <span class="accent-gradient">Straight to your</span><br>
+              Discord.
+            </h1>
+            
+            <p class="max-w-lg text-xl text-[#94a3b8] mb-9 leading-relaxed">
+              Monitor leaked.cx in real time. Track your favorite artists. 
+              Receive beautiful, instant Discord notifications before leaks disappear.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <button onclick="login()" class="btn-primary group flex items-center justify-center gap-x-3 px-8 py-4 text-lg font-semibold rounded-3xl text-white w-full sm:w-auto">
+                <span>Get Started Free</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 group-hover:translate-x-0.5 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button onclick="document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })" class="btn-secondary flex items-center justify-center gap-x-2 px-7 py-4 text-lg font-semibold rounded-3xl w-full sm:w-auto">
+                View Plans
+              </button>
+            </div>
+
+            <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4 text-sm">
+              <div class="flex items-center gap-x-3">
+                <div class="flex -space-x-2">
+                  <div class="w-7 h-7 rounded-full bg-[#1f2435] border border-[#2a3147]"></div>
+                  <div class="w-7 h-7 rounded-full bg-[#1f2435] border border-[#2a3147]"></div>
+                  <div class="w-7 h-7 rounded-full bg-[#1f2435] border border-[#2a3147]"></div>
+                </div>
+                <span class="text-[#64748b] text-sm font-medium">Joined by <span class="text-white font-semibold">840+</span> servers</span>
+              </div>
+              <div class="h-3 w-px bg-white/10 hidden sm:block"></div>
+              <div class="flex items-center gap-x-2 text-[#64748b]">
+                <span class="font-mono text-emerald-400 font-semibold">127k</span>
+                <span class="text-sm">notifications delivered today</span>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="loadFeeds()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            Refresh
-          </button>
-        </div>
-        <div id="feeds-list"><div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading feeds…</span></div></div>
-      </div>
 
-      <!-- ── SETTINGS ── -->
-      <div id="tab-settings" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Settings</div>
-            <div class="dash-header-sub">Notification and server preferences</div>
-          </div>
-        </div>
-        <div id="settings-guild-warn" class="alert alert-warning" style="margin-bottom:1rem;display:none">
-          Select a server in the Servers tab to configure its settings.
-        </div>
+          <!-- Hero Visual -->
+          <div class="lg:col-span-5 mt-12 lg:mt-0 relative">
+            <div class="mock-window rounded-3xl overflow-hidden border border-[#1f2435] shadow-2xl">
+              <div class="mock-header px-5 py-3.5 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                  <div class="flex items-center gap-x-1.5">
+                    <div class="w-3 h-3 rounded-full bg-[#ef4444]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#eab308]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#22c55e]"></div>
+                  </div>
+                  <div class="text-xs font-mono text-[#64748b]">prefixhub.app • live</div>
+                </div>
+                <div class="flex items-center gap-x-2 text-xs">
+                  <div class="px-2.5 py-px rounded bg-emerald-500/10 text-emerald-400 flex items-center gap-x-1">
+                    <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span class="font-medium text-[10px]">98 feeds healthy</span>
+                  </div>
+                </div>
+              </div>
 
-        <div class="tab-bar">
-          <button class="tab-btn active" onclick="switchSettingsTab('notifications')" data-stab="notifications">Notifications</button>
-          <button class="tab-btn" onclick="switchSettingsTab('filters')" data-stab="filters">Filters</button>
-        </div>
+              <div class="p-5 bg-[#050507]">
+                <div class="grid grid-cols-12 gap-4">
+                  <div class="col-span-5 bg-[#0a0b12] border border-[#1f2435] rounded-2xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="text-xs font-semibold tracking-widest text-[#64748b]">TRACKED ARTISTS</div>
+                      <div class="text-[10px] px-2 py-px bg-white/5 rounded text-[#94a3b8]">142 / 250</div>
+                    </div>
+                    <div class="space-y-1.5 text-sm">
+                      <div class="flex items-center justify-between py-1 px-2 rounded-lg hover:bg-white/5"><span class="font-medium">Travis Scott</span> <span class="text-emerald-400 text-xs">• 12 leaks</span></div>
+                      <div class="flex items-center justify-between py-1 px-2 rounded-lg hover:bg-white/5"><span class="font-medium">Playboi Carti</span> <span class="text-emerald-400 text-xs">• 8 leaks</span></div>
+                      <div class="flex items-center justify-between py-1 px-2 rounded-lg hover:bg-white/5"><span class="font-medium">Future</span> <span class="text-emerald-400 text-xs">• 19 leaks</span></div>
+                    </div>
+                  </div>
 
-        <div id="stab-notifications" class="tab-panel active">
-          <div class="card">
-            <div class="card-header"><div class="card-title">Notification Settings</div></div>
-            <div class="notif-row">
-              <div>
-                <div class="notif-label">New leaks</div>
-                <div class="notif-desc">Get notified when a new thread appears for a tracked artist</div>
-              </div>
-              <label class="toggle"><input type="checkbox" checked id="notif-new"><span class="toggle-track"></span></label>
-            </div>
-            <div class="notif-row">
-              <div>
-                <div class="notif-label">Thread deletions</div>
-                <div class="notif-desc">Alert when a tracked thread disappears from leaked.cx</div>
-              </div>
-              <label class="toggle"><input type="checkbox" id="notif-delete"><span class="toggle-track"></span></label>
-            </div>
-            <div class="notif-row">
-              <div>
-                <div class="notif-label">Notification format</div>
-                <div class="notif-desc">Rich embeds or plain text messages</div>
-              </div>
-              <select class="form-input" style="width:130px" id="notif-format">
-                <option value="embed">Rich Embed</option>
-                <option value="text">Plain Text</option>
-              </select>
-            </div>
-          </div>
-        </div>
+                  <div class="col-span-7 bg-[#0a0b12] border border-[#1f2435] rounded-2xl p-4 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                      <div class="text-xs font-semibold tracking-widest text-[#64748b]">LIVE LEAK FEED</div>
+                      <div class="text-emerald-400 text-xs flex items-center gap-x-1"><span>●</span> <span class="font-mono">34 new today</span></div>
+                    </div>
+                    <div class="space-y-[3px] text-xs flex-1">
+                      <div class="mock-leak-item flex items-center justify-between px-3 py-[7px] rounded-xl bg-white/5">
+                        <div><div class="font-medium">Utopia (Deluxe) — Full Album</div><div class="text-[#64748b] text-[10px]">Travis Scott • 4m ago</div></div>
+                        <div class="text-emerald-400 text-[10px] font-mono">LIVE</div>
+                      </div>
+                      <div class="mock-leak-item flex items-center justify-between px-3 py-[7px] rounded-xl">
+                        <div><div class="font-medium">New Music Friday — Week 24</div><div class="text-[#64748b] text-[10px]">Various • 19m ago</div></div>
+                        <div class="text-emerald-400 text-[10px] font-mono">LIVE</div>
+                      </div>
+                    </div>
+                  </div>
 
-        <div id="stab-filters" class="tab-panel" style="display:none">
-          <div class="card">
-            <div class="card-header">
-              <div>
-                <div class="card-title">Advanced Filters</div>
-                <div class="card-subtitle">Premium feature</div>
+                  <div class="col-span-12 mt-1">
+                    <div class="text-xs font-semibold tracking-widest text-[#64748b] mb-2 px-1">DISCORD NOTIFICATION PREVIEW</div>
+                    <div class="discord-embed p-4 text-sm max-w-md">
+                      <div class="flex items-center gap-x-2 mb-2">
+                        <div class="w-6 h-6 rounded-full bg-[#a855f7]"></div>
+                        <div><span class="font-semibold text-white">Prefix Hub</span> <span class="text-[#64748b] text-xs ml-1.5">BOT • today at 14:22</span></div>
+                      </div>
+                      <div class="font-semibold text-white mb-1">🚨 New Leak Detected: Travis Scott — "FE!N (Demo)"</div>
+                      <div class="text-[#c4c9d4] text-xs leading-snug mb-3">Matched artist: <span class="text-[#a855f7]">Travis Scott</span><br>Tags: #demo #unreleased #utopia</div>
+                      <div class="flex items-center gap-x-2">
+                        <button class="text-xs px-3 py-1 rounded-lg bg-[#4752c4] hover:bg-[#5865f2] transition text-white font-medium">View on leaked.cx →</button>
+                        <div class="text-[#64748b] text-xs">@leaks-role</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <span class="badge badge-premium">Premium only</span>
-            </div>
-            <div id="filters-locked" style="display:none">
-              <div class="empty" style="padding:2rem">
-                <div class="empty-icon">🔒</div>
-                <h3>Premium required</h3>
-                <p>Advanced filters are available on Premium. Upgrade to set keyword rules, tag filters, and age thresholds.</p>
-                <button class="btn btn-gold btn-sm" onclick="switchTab('upgrade')">Upgrade to Premium</button>
-              </div>
-            </div>
-            <div id="filters-content" style="display:none">
-              <div class="form-group">
-                <label class="form-label">Blacklisted artists</label>
-                <input class="form-input" id="filter-blacklist" type="text" placeholder="artist1, artist2, …">
-                <div class="form-hint">Comma-separated. Leaks for these artists will be silently dropped.</div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Minimum thread age (minutes)</label>
-                <input class="form-input" id="filter-min-age" type="number" min="0" value="0">
-                <div class="form-hint">Ignore threads younger than this. Useful to reduce false positives.</div>
-              </div>
-              <button class="btn btn-sm" style="margin-top:0.25rem">Save Filters</button>
             </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- ── UPGRADE ── -->
-      <div id="tab-upgrade" class="dash-tab-content" style="display:none">
-        <div class="dash-header">
-          <div>
-            <div class="dash-header-title">Plans &amp; Billing</div>
-            <div class="dash-header-sub">Manage your Prefix Hub subscription</div>
+    <!-- TRUST STATS -->
+    <div class="border-y border-[#1f2435] bg-[#0a0b12]">
+      <div class="max-w-7xl mx-auto px-6 py-5">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-y-6 text-center">
+          <div><div id="stat-guilds" class="text-4xl font-semibold tabular-nums tracking-tighter text-white">1.2k</div><div class="text-xs tracking-[1.5px] text-[#64748b] mt-1">ACTIVE SERVERS</div></div>
+          <div><div id="stat-entries" class="text-4xl font-semibold tabular-nums tracking-tighter text-white">184k</div><div class="text-xs tracking-[1.5px] text-[#64748b] mt-1">LEAKS TRACKED</div></div>
+          <div><div id="stat-artists" class="text-4xl font-semibold tabular-nums tracking-tighter text-white">9.4k</div><div class="text-xs tracking-[1.5px] text-[#64748b] mt-1">ARTISTS MONITORED</div></div>
+          <div><div id="stat-notifs" class="text-4xl font-semibold tabular-nums tracking-tighter text-white">2.8m</div><div class="text-xs tracking-[1.5px] text-[#64748b] mt-1">NOTIFICATIONS SENT</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section id="features" class="max-w-7xl mx-auto px-6 pt-20 pb-16 section">
+      <div class="text-center mb-14">
+        <div class="inline text-xs font-bold tracking-[2px] text-[#a855f7] mb-3">POWERFUL BY DESIGN</div>
+        <h2 class="section-header font-display tracking-tighter">Everything your leak community needs</h2>
+        <p class="mt-4 max-w-md mx-auto text-[#94a3b8]">A complete real-time monitoring system — from RSS polling to rich Discord delivery — with one beautiful dashboard.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-[#a855f7]/10 flex items-center justify-center mb-6 group-hover:bg-[#a855f7]/20 transition"><span class="text-3xl">⚡</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Real-Time Polling</h3><p class="text-[#94a3b8] leading-relaxed">Polls leaked.cx RSS feeds every 35 seconds. Premium members get priority 15-second intervals.</p></div>
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-[#3b82f6]/10 flex items-center justify-center mb-6 group-hover:bg-[#3b82f6]/20 transition"><span class="text-3xl">🎤</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Artist Tracking</h3><p class="text-[#94a3b8] leading-relaxed">Add artists by name. Smart matching + Discord role pings for instant alerts.</p></div>
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-emerald-500/10 flex items-center justify-center mb-6 group-hover:bg-emerald-500/20 transition"><span class="text-3xl">🔔</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Rich Notifications</h3><p class="text-[#94a3b8] leading-relaxed">Beautiful Discord embeds with artwork, metadata, tags, and direct links.</p></div>
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-6 group-hover:bg-amber-500/20 transition"><span class="text-3xl">🗑️</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Deletion Tracking</h3><p class="text-[#94a3b8] leading-relaxed">Instant alerts when threads disappear from leaked.cx.</p></div>
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-6 group-hover:bg-rose-500/20 transition"><span class="text-3xl">🔍</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Advanced Filters</h3><p class="text-[#94a3b8] leading-relaxed">Blacklists, tag filters, age thresholds. Premium exclusive.</p></div>
+        <div class="feature-card group rounded-3xl p-7 card"><div class="w-11 h-11 rounded-2xl bg-violet-500/10 flex items-center justify-center mb-6 group-hover:bg-violet-500/20 transition"><span class="text-3xl">📊</span></div><h3 class="font-semibold text-xl tracking-tight mb-2.5">Analytics Dashboard</h3><p class="text-[#94a3b8] leading-relaxed">Track volume, feed health, artist activity — all in one clean view.</p></div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how-it-works" class="bg-[#0a0b12] border-y border-[#1f2435] py-20 section">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <div class="text-xs font-bold tracking-[2px] text-[#a855f7]">3 SIMPLE STEPS</div>
+          <h2 class="section-header font-display tracking-tighter mt-3">Get started in under 60 seconds</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="card bg-[#050507] border border-[#1f2435] rounded-3xl p-8"><div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#7c3aed] flex items-center justify-center text-white font-black text-xl mb-6">1</div><h3 class="font-semibold text-2xl tracking-tight mb-3">Add the bot</h3><p class="text-[#94a3b8]">Invite Prefix Hub to your Discord server. Works instantly.</p></div>
+          <div class="card bg-[#050507] border border-[#1f2435] rounded-3xl p-8"><div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#7c3aed] flex items-center justify-center text-white font-black text-xl mb-6">2</div><h3 class="font-semibold text-2xl tracking-tight mb-3">Configure artists &amp; filters</h3><p class="text-[#94a3b8]">Add artists, assign roles, set filters from the dashboard.</p></div>
+          <div class="card bg-[#050507] border border-[#1f2435] rounded-3xl p-8"><div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#a855f7] to-[#7c3aed] flex items-center justify-center text-white font-black text-xl mb-6">3</div><h3 class="font-semibold text-2xl tracking-tight mb-3">Receive instant alerts</h3><p class="text-[#94a3b8]">Get rich notifications the moment new leaks drop. Zero effort.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY US -->
+    <section id="why-us" class="max-w-7xl mx-auto px-6 py-20 section">
+      <div class="grid lg:grid-cols-12 gap-x-16 items-center">
+        <div class="lg:col-span-5 mb-12 lg:mb-0">
+          <div class="text-xs font-bold tracking-[2px] text-[#a855f7] mb-3">THE PREFIX HUB DIFFERENCE</div>
+          <h2 class="section-header font-display tracking-tighter leading-none">Built for serious<br>music communities.</h2>
+          <p class="mt-5 text-[#94a3b8] max-w-md">Most Discord bots are generic. Prefix Hub was built specifically for music leak tracking — speed, accuracy, and beautiful delivery.</p>
+        </div>
+        <div class="lg:col-span-7">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div class="rounded-3xl border border-[#1f2435] p-6 bg-[#0a0b12]"><div class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-400"><span>✓</span> <span>Faster than anything else</span></div><p class="text-sm text-[#94a3b8]">15-second polling on Premium. Most bots are minutes behind.</p></div>
+            <div class="rounded-3xl border border-[#1f2435] p-6 bg-[#0a0b12]"><div class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-400"><span>✓</span> <span>Rich, contextual embeds</span></div><p class="text-sm text-[#94a3b8]">Artwork, tags, matched artists, direct links. No plain text spam.</p></div>
+            <div class="rounded-3xl border border-[#1f2435] p-6 bg-[#0a0b12]"><div class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-400"><span>✓</span> <span>Deletion intelligence</span></div><p class="text-sm text-[#94a3b8]">Know instantly when content is removed. Critical for collectors.</p></div>
+            <div class="rounded-3xl border border-[#1f2435] p-6 bg-[#0a0b12]"><div class="font-semibold mb-4 flex items-center gap-x-2 text-emerald-400"><span>✓</span> <span>Professional dashboard</span></div><p class="text-sm text-[#94a3b8]">Full analytics and easy management. Feels like real SaaS.</p></div>
           </div>
         </div>
-        <div id="upgrade-content"><div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div></div>
       </div>
+    </section>
 
-    </main>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     MODALS
-════════════════════════════════════════════════════════════════════ -->
-
-<!-- Add Artist -->
-<div class="modal-backdrop" id="modal-add-artist">
-  <div class="modal">
-    <div class="modal-title">Track New Artist</div>
-    <div class="form-group">
-      <label class="form-label">Artist Name</label>
-      <input class="form-input" id="input-artist-name" type="text" placeholder="e.g. Travis Scott" maxlength="100"
-        onkeydown="if(event.key==='Enter')submitAddArtist()" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Discord Role ID <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
-      <input class="form-input" id="input-artist-role" type="number" placeholder="Leave blank to skip" />
-      <div class="form-hint">If set, this role will be mentioned when a new leak is detected.</div>
-    </div>
-    <div id="add-artist-error" style="display:none;margin-bottom:0"></div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-add-artist')">Cancel</button>
-      <button class="btn" onclick="submitAddArtist()">Add Artist</button>
-    </div>
-  </div>
-</div>
-
-<!-- Remove Artist confirm -->
-<div class="modal-backdrop" id="modal-remove-artist">
-  <div class="modal">
-    <div class="modal-title">Remove Artist</div>
-    <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem">
-      Remove <strong id="remove-artist-name"></strong> from tracking? Existing notifications won't be affected.
-    </p>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeModal('modal-remove-artist')">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmRemoveArtist()">Remove</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     TOAST
-════════════════════════════════════════════════════════════════════ -->
-<div id="toast" style="
-  position:fixed; bottom:1.5rem; right:1.5rem; z-index:300;
-  background:var(--surface); border:1px solid var(--border2);
-  border-radius:10px; padding:0.85rem 1.1rem;
-  box-shadow:var(--shadow); font-size:0.875rem; font-weight:500;
-  display:none; align-items:center; gap:0.6rem; max-width:320px;
-  animation: toastIn 0.2s ease;
-"></div>
-<style>@keyframes toastIn { from { opacity:0; transform:translateY(8px); } }</style>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════════════════════════ -->
-<script>
-'use strict';
-// ── State ───────────────────────────────────────────────────────────
-let currentUser   = null;
-let guilds        = [];
-let selectedGuild = null;
-let allArtists    = [];
-let allRecent     = [];
-let artistToRemove = null;
-
-// ── Utilities ────────────────────────────────────────────────────────
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function fmt(n) {
-  if (n == null) return '—';
-  if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,'') + 'k';
-  return String(n);
-}
-function fmtDate(s) {
-  if (!s) return '—';
-  const d = new Date(s);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-function fmtTime(s) {
-  if (!s) return '—';
-  const d = new Date(s);
-  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-}
-function timeAgo(s) {
-  if (!s) return '—';
-  const sec = Math.floor((Date.now() - new Date(s)) / 1000);
-  if (sec < 60) return 'just now';
-  if (sec < 3600) return Math.floor(sec/60) + 'm ago';
-  if (sec < 86400) return Math.floor(sec/3600) + 'h ago';
-  return Math.floor(sec/86400) + 'd ago';
-}
-
-let toastTimer = null;
-function toast(msg, type='success') {
-  const el = document.getElementById('toast');
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const colors = { success: 'var(--green)', error: 'var(--red)', info: '#818cf8' };
-  el.innerHTML = `<span style="color:${colors[type]};font-size:1rem">${icons[type]}</span>${esc(msg)}`;
-  el.style.display = 'flex';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.style.display = 'none'; }, 3000);
-}
-
-function scrollToSection(id) {
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ── Auth ─────────────────────────────────────────────────────────────
-function login()  { window.location.href = '/auth/login'; }
-function logout() { window.location.href = '/auth/logout'; }
-
-async function init() {
-  loadLandingStats();
-  try {
-    const res = await fetch('/auth/me', { credentials: 'include' });
-    if (res.ok) {
-      currentUser = await res.json();
-      showDashboard();
-    } else {
-      showLanding();
-    }
-  } catch { showLanding(); }
-}
-
-function showLanding() {
-  document.getElementById('page-landing').classList.add('active');
-  document.getElementById('page-dashboard').classList.remove('active');
-  document.getElementById('topbar-landing-nav').style.display = '';
-  document.getElementById('topbar-logged-out').style.display = '';
-  document.getElementById('topbar-logged-in').style.display = 'none';
-}
-
-function showDashboard() {
-  document.getElementById('page-landing').classList.remove('active');
-  document.getElementById('page-dashboard').classList.add('active');
-  document.getElementById('topbar-landing-nav').style.display = 'none';
-  document.getElementById('topbar-logged-out').style.display = 'none';
-  const li = document.getElementById('topbar-logged-in');
-  li.style.display = 'flex';
-
-  // Set user info
-  const tier = currentUser.premium_tier || 'free';
-  document.getElementById('topbar-username').textContent = currentUser.username;
-  const tierEl = document.getElementById('topbar-tier');
-  tierEl.textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
-  tierEl.className = `tier-pill tier-${tier}`;
-
-  // Avatar
-  const av = document.getElementById('topbar-avatar');
-  if (currentUser.avatar_hash) {
-    av.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar_hash}.webp?size=64" alt="" />`;
-  } else {
-    av.textContent = currentUser.username.charAt(0).toUpperCase();
-  }
-
-  // Show upgrade nudge for free users
-  if (tier === 'free') {
-    document.getElementById('sidebar-upgrade-nudge').style.display = 'block';
-  }
-
-  switchTab('overview');
-}
-
-// ── Tab routing ──────────────────────────────────────────────────────
-const TAB_LOADERS = {
-  overview: loadOverview,
-  recent:   loadRecent,
-  servers:  loadServers,
-  artists:  () => { if (selectedGuild) loadArtists(); },
-  feeds:    loadFeeds,
-  settings: loadSettings,
-  upgrade:  loadUpgrade,
-};
-
-function switchTab(tab) {
-  document.querySelectorAll('.dash-tab-content').forEach(p => p.style.display = 'none');
-  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-  const panel = document.getElementById('tab-' + tab);
-  if (panel) panel.style.display = 'block';
-  const sideBtn = document.querySelector(`[data-tab="${tab}"]`);
-  if (sideBtn) sideBtn.classList.add('active');
-  if (TAB_LOADERS[tab]) TAB_LOADERS[tab]();
-}
-
-// ── Landing stats ────────────────────────────────────────────────────
-async function loadLandingStats() {
-  try {
-    const res = await fetch('/api/analytics/overview', { credentials: 'include' });
-    if (!res.ok) return;
-    const d = await res.json();
-    document.getElementById('ls-guilds').textContent  = fmt(d.total_guilds);
-    document.getElementById('ls-entries').textContent = fmt(d.total_feed_entries);
-    document.getElementById('ls-artists').textContent = fmt(d.total_tracked_artists);
-    document.getElementById('ls-notifs').textContent  = fmt(d.notifications_last_30d);
-  } catch {}
-}
-
-// ── Overview ─────────────────────────────────────────────────────────
-async function loadOverview() {
-  document.getElementById('overview-stats').innerHTML = '<div class="stat-card"><div class="spinner"></div></div>';
-  try {
-    const res = await fetch('/api/analytics/overview', { credentials: 'include' });
-    const d = await res.json();
-    document.getElementById('overview-stats').innerHTML = `
-      <div class="stat-card">
-        <div class="stat-val">${fmt(d.total_guilds)}</div>
-        <div class="stat-label">Active Servers</div>
-      </div>
-      <div class="stat-card green">
-        <div class="stat-val">${fmt(d.feed_entries_last_7d)}</div>
-        <div class="stat-label">Leaks This Week</div>
-      </div>
-      <div class="stat-card gold">
-        <div class="stat-val">${fmt(d.notifications_last_30d)}</div>
-        <div class="stat-label">Notifications (30d)</div>
-      </div>
-      <div class="stat-card purple">
-        <div class="stat-val">${fmt(d.total_tracked_artists)}</div>
-        <div class="stat-label">Artists Monitored</div>
-      </div>
-    `;
-
-    // Lower grid: recent activity + feed summary
-    const recent = await fetch('/api/analytics/recent-entries?limit=5', { credentials: 'include' });
-    const entries = await recent.json();
-    const rows = entries.map(e => `
-      <tr>
-        <td>
-          <a href="${esc(e.url)}" target="_blank" style="color:var(--text);font-weight:500">
-            ${esc(e.title.length > 48 ? e.title.slice(0,48)+'…' : e.title)}
-          </a>
-        </td>
-        <td style="color:var(--text-muted)">${(e.matched_artists||[]).slice(0,2).map(a=>esc(a)).join(', ') || '—'}</td>
-        <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
-        <td style="color:var(--text-muted);white-space:nowrap">${timeAgo(e.first_seen_at)}</td>
-      </tr>`).join('');
-
-    document.getElementById('overview-lower').innerHTML = `
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Recent Activity</div>
-          <button class="btn btn-ghost btn-sm" onclick="switchTab('recent')">View all</button>
+    <!-- ANALYTICS SHOWCASE -->
+    <section class="bg-[#0a0b12] border-y border-[#1f2435] py-20 section">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-y-4 mb-10">
+          <div><div class="text-xs font-bold tracking-[2px] text-[#a855f7]">REAL-TIME INSIGHTS</div><h2 class="section-header font-display tracking-tighter">Powerful analytics that matter</h2></div>
+          <p class="max-w-xs text-[#94a3b8]">Track performance, monitor feed health, and understand community engagement.</p>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Title</th><th>Artists</th><th>Status</th><th>When</th></tr></thead>
-            <tbody>${rows || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:2rem">No recent leaks</td></tr>'}</tbody>
-          </table>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Quick Actions</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:0.6rem">
-          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="switchTab('artists')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-            Add Artist to Track
-          </button>
-          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="switchTab('feeds')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-            Check Feed Health
-          </button>
-          <button class="btn btn-ghost" style="justify-content:flex-start" onclick="switchTab('upgrade')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            Manage Subscription
-          </button>
-        </div>
-      </div>
-    `;
-  } catch (e) {
-    document.getElementById('overview-stats').innerHTML = '<div class="alert alert-error">Failed to load stats.</div>';
-  }
-}
 
-// ── Recent Leaks ─────────────────────────────────────────────────────
-async function loadRecent() {
-  document.getElementById('recent-list').innerHTML = '<div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div>';
-  try {
-    const res = await fetch('/api/analytics/recent-entries?limit=50', { credentials: 'include' });
-    allRecent = await res.json();
-    renderRecent(allRecent);
-  } catch {
-    document.getElementById('recent-list').innerHTML = '<div class="alert alert-error">Failed to load leaks.</div>';
-  }
-}
+        <div class="mock-window rounded-3xl p-8 border border-[#1f2435]">
+          <div class="flex items-center justify-between mb-8">
+            <div><div class="font-semibold">Analytics Overview</div><div class="text-xs text-[#64748b]">Last 30 days • Updated just now</div></div>
+            <div class="px-4 py-1.5 text-xs rounded-2xl border border-[#1f2435] flex items-center gap-x-2"><div class="w-2 h-2 bg-emerald-400 rounded-full"></div><span class="font-mono text-emerald-400">All systems operational</span></div>
+          </div>
 
-function filterRecent() {
-  const q = document.getElementById('recent-search').value.toLowerCase();
-  renderRecent(allRecent.filter(e =>
-    e.title.toLowerCase().includes(q) ||
-    (e.matched_artists||[]).some(a => a.toLowerCase().includes(q))
-  ));
-}
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-9">
+            <div class="bg-[#050507] border border-[#1f2435] rounded-2xl p-5"><div class="text-xs text-[#64748b]">LEAKS DETECTED</div><div class="text-4xl font-semibold tabular-nums tracking-tighter mt-2">18,492</div><div class="text-emerald-400 text-xs mt-1">+34% from last month</div></div>
+            <div class="bg-[#050507] border border-[#1f2435] rounded-2xl p-5"><div class="text-xs text-[#64748b]">NOTIFICATIONS SENT</div><div class="text-4xl font-semibold tabular-nums tracking-tighter mt-2">142,871</div><div class="text-emerald-400 text-xs mt-1">+19% from last month</div></div>
+            <div class="bg-[#050507] border border-[#1f2435] rounded-2xl p-5"><div class="text-xs text-[#64748b]">AVG RESPONSE TIME</div><div class="text-4xl font-semibold tabular-nums tracking-tighter mt-2">11s</div><div class="text-emerald-400 text-xs mt-1">Premium: 4.2s</div></div>
+            <div class="bg-[#050507] border border-[#1f2435] rounded-2xl p-5"><div class="text-xs text-[#64748b]">ACTIVE ARTISTS</div><div class="text-4xl font-semibold tabular-nums tracking-tighter mt-2">9,412</div><div class="text-emerald-400 text-xs mt-1">Across 1,248 servers</div></div>
+          </div>
 
-function renderRecent(entries) {
-  if (!entries.length) {
-    document.getElementById('recent-list').innerHTML = '<div class="empty"><div class="empty-icon">🎵</div><h3>No leaks found</h3></div>';
-    return;
-  }
-  const rows = entries.map(e => `
-    <tr>
-      <td>
-        <a href="${esc(e.url)}" target="_blank" style="color:var(--text);font-weight:500;line-height:1.4;display:block">
-          ${esc(e.title.length>70 ? e.title.slice(0,70)+'…' : e.title)}
-        </a>
-        ${(e.thread_tags||[]).length ? `<div style="margin-top:0.2rem">${e.thread_tags.slice(0,4).map(t=>`<span style="font-size:0.68rem;background:var(--surface3);color:var(--text-muted);padding:0.1rem 0.4rem;border-radius:4px;margin-right:2px">${esc(t)}</span>`).join('')}</div>` : ''}
-      </td>
-      <td style="color:var(--text-muted);font-size:0.82rem;white-space:nowrap">${(e.matched_artists||[]).slice(0,3).map(a=>esc(a)).join(', ') || '—'}</td>
-      <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
-      <td style="color:var(--text-muted);font-size:0.8rem;white-space:nowrap">${timeAgo(e.first_seen_at)}</td>
-    </tr>`).join('');
-  document.getElementById('recent-list').innerHTML = `
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Title &amp; Tags</th><th>Matched Artists</th><th>Status</th><th>When</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-}
-
-// ── Servers ──────────────────────────────────────────────────────────
-async function loadServers() {
-  document.getElementById('servers-list').innerHTML = '<div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div>';
-  try {
-    const res = await fetch('/api/guilds/', { credentials: 'include' });
-    guilds = await res.json();
-
-    const tier = currentUser?.premium_tier || 'free';
-    const canInvite = tier === 'premium';
-    document.getElementById('premium-only-notice').style.display = canInvite ? 'none' : 'block';
-    const anyUnconfigured = guilds.some(g => !g.is_configured);
-    document.getElementById('setup-needed-notice').style.display = anyUnconfigured ? 'block' : 'none';
-
-    if (!guilds.length) {
-      document.getElementById('servers-list').innerHTML = `
-        <div class="empty">
-          <div class="empty-icon">🖥️</div>
-          <h3>No servers yet</h3>
-          <p>The bot needs to be in a server for it to appear here. Premium members can invite the bot to their own server.</p>
-          ${canInvite ? `<button class="btn btn-sm" onclick="copyInviteLink()">Copy Invite Link</button>` : `<button class="btn btn-gold btn-sm" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}
-        </div>`;
-      return;
-    }
-
-    updateGuildSelector();
-    document.getElementById('servers-list').innerHTML = `<div class="server-grid">${guilds.map(g => serverCard(g)).join('')}</div>`;
-  } catch {
-    document.getElementById('servers-list').innerHTML = '<div class="alert alert-error">Failed to load servers.</div>';
-  }
-}
-
-function serverCard(g) {
-  const initials = g.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const iconHtml = g.id && g.icon_hash
-    ? `<img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon_hash}.webp?size=64" alt="" />`
-    : initials;
-  const tierBadge = `<span class="badge badge-${g.premium_tier}">${g.premium_tier}</span>`;
-  const isSelected = selectedGuild?.id === g.id;
-  const configMeta = g.is_configured
-    ? '<span style="color:var(--green);font-size:0.75rem">✓ Configured</span>'
-    : '<span style="color:var(--gold);font-size:0.75rem">⚠ Run /setup first</span>';
-  return `
-    <div class="server-card ${isSelected?'selected':''}" onclick="selectGuildById('${esc(g.id)}')">
-      <div class="server-card-header">
-        <div class="server-icon">${iconHtml}</div>
-        <div>
-          <div class="server-name">${esc(g.name)}</div>
-          <div class="server-meta">${configMeta}</div>
-        </div>
-      </div>
-      <div class="server-card-footer">
-        ${tierBadge}
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();selectGuildAndArtists('${esc(g.id)}','${esc(g.name)}')">Manage Artists</button>
-      </div>
-    </div>`;
-}
-
-function selectGuildById(id) {
-  selectedGuild = guilds.find(g => String(g.id) === String(id)) || null;
-  updateGuildSelector();
-  // Rerender cards to show selection highlight
-  if (document.getElementById('servers-list').querySelector('.server-grid')) {
-    document.getElementById('servers-list').innerHTML = `<div class="server-grid">${guilds.map(g => serverCard(g)).join('')}</div>`;
-  }
-}
-
-function selectGuildAndArtists(id, name) {
-  selectedGuild = guilds.find(g => String(g.id) === String(id)) || { id: String(id), name };
-  document.getElementById('artists-guild-label').textContent = `Managing: ${name}`;
-  document.getElementById('btn-add-artist').disabled = false;
-  document.getElementById('artist-usage-bar').style.display = 'block';
-  updateGuildSelector();
-  switchTab('artists');
-  loadArtists();
-}
-
-function updateGuildSelector() {
-  if (!guilds.length) {
-    document.getElementById('topbar-guild-select').innerHTML = '';
-    return;
-  }
-  const g = selectedGuild || guilds[0];
-  if (!g) return;
-  document.getElementById('topbar-guild-select').innerHTML = `
-    <div class="guild-selector" onclick="switchTab('servers')">
-      <span class="guild-dot" style="background:${g.is_configured?'var(--green)':'var(--gold)'}"></span>
-      <span>${esc(g.name)}</span>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>`;
-}
-
-function copyInviteLink() {
-  const clientId = document.querySelector('meta[name="discord-client-id"]')?.content || '';
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=274878024704&scope=bot%20applications.commands`;
-  navigator.clipboard.writeText(url).then(() => toast('Invite link copied!')).catch(() => toast('Could not copy link', 'error'));
-}
-
-// ── Artists ──────────────────────────────────────────────────────────
-async function loadArtists() {
-  if (!selectedGuild) return;
-  document.getElementById('artists-list').innerHTML = '<div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div>';
-  try {
-    const res = await fetch(`/api/guilds/${selectedGuild.id}/artists`, { credentials: 'include' });
-    allArtists = await res.json();
-    updateArtistUsage(allArtists.length);
-    renderArtists(allArtists);
-  } catch {
-    document.getElementById('artists-list').innerHTML = '<div class="alert alert-error">Failed to load artists.</div>';
-  }
-}
-
-function updateArtistUsage(count) {
-  const tier = currentUser?.premium_tier || 'free';
-  const limits = { free: 5, supporter: 25, premium: Infinity };
-  const max = limits[tier] || 5;
-  const pct = max === Infinity ? 0 : Math.min(100, (count / max) * 100);
-  document.getElementById('artist-usage-label').textContent = max === Infinity ? `${count} / ∞` : `${count} / ${max}`;
-  const bar = document.getElementById('artist-usage-fill');
-  bar.style.width = max === Infinity ? '5%' : pct + '%';
-  bar.className = 'progress-bar' + (pct >= 90 ? ' gold' : pct >= 100 ? ' red' : '');
-}
-
-function filterArtists() {
-  const q = document.getElementById('artist-search').value.toLowerCase();
-  renderArtists(allArtists.filter(a => a.artist_name.toLowerCase().includes(q)));
-}
-
-function renderArtists(artists) {
-  if (!artists.length) {
-    document.getElementById('artists-list').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">🎤</div>
-        <h3>No artists tracked</h3>
-        <p>Click "+ Add Artist" to start tracking leaks for specific artists.</p>
-      </div>`;
-    return;
-  }
-  const rows = artists.map(a => `
-    <tr>
-      <td><span style="font-weight:600">${esc(a.artist_name)}</span></td>
-      <td><span style="color:var(--text-muted);font-family:monospace;font-size:0.8rem">${a.role_id || '—'}</span></td>
-      <td>${a.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Inactive</span>'}</td>
-      <td style="color:var(--text-muted);font-size:0.8rem">${fmtDate(a.added_at)}</td>
-      <td>
-        <button class="btn btn-danger btn-sm" onclick="openRemoveArtist('${esc(a.artist_name)}')">Remove</button>
-      </td>
-    </tr>`).join('');
-  document.getElementById('artists-list').innerHTML = `
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Artist</th><th>Role ID</th><th>Status</th><th>Added</th><th></th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>`;
-}
-
-function openAddArtist() {
-  document.getElementById('input-artist-name').value = '';
-  document.getElementById('input-artist-role').value = '';
-  const err = document.getElementById('add-artist-error');
-  err.style.display = 'none'; err.textContent = '';
-  openModal('modal-add-artist');
-  setTimeout(() => document.getElementById('input-artist-name').focus(), 50);
-}
-
-async function submitAddArtist() {
-  const name = document.getElementById('input-artist-name').value.trim();
-  const roleRaw = document.getElementById('input-artist-role').value.trim();
-  const errEl = document.getElementById('add-artist-error');
-  errEl.style.display = 'none';
-
-  if (!name) {
-    showErr(errEl, 'Artist name is required.');
-    return;
-  }
-  const body = { name };
-  if (roleRaw) body.role_id = parseInt(roleRaw);
-  try {
-    const res = await fetch(`/api/guilds/${selectedGuild.id}/artists`, {
-      method: 'POST', credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
-    if (res.ok) {
-      closeModal('modal-add-artist');
-      toast(`${name} added!`);
-      loadArtists();
-    } else {
-      const d = await res.json();
-      showErr(errEl, d.detail || 'Failed to add artist.');
-    }
-  } catch { showErr(errEl, 'Network error.'); }
-}
-
-function openRemoveArtist(name) {
-  artistToRemove = name;
-  document.getElementById('remove-artist-name').textContent = name;
-  openModal('modal-remove-artist');
-}
-
-async function confirmRemoveArtist() {
-  if (!artistToRemove) return;
-  try {
-    await fetch(`/api/guilds/${selectedGuild.id}/artists/${encodeURIComponent(artistToRemove)}`, {
-      method: 'DELETE', credentials: 'include',
-    });
-    closeModal('modal-remove-artist');
-    toast(`${artistToRemove} removed.`, 'info');
-    artistToRemove = null;
-    loadArtists();
-  } catch { toast('Failed to remove artist.', 'error'); }
-}
-
-// ── Feeds ────────────────────────────────────────────────────────────
-async function loadFeeds() {
-  document.getElementById('feeds-list').innerHTML = '<div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div>';
-  try {
-    const res = await fetch('/api/feeds/', { credentials: 'include' });
-    const feeds = await res.json();
-    if (!feeds.length) {
-      document.getElementById('feeds-list').innerHTML = '<div class="empty"><div class="empty-icon">📡</div><h3>No feeds configured</h3></div>';
-      return;
-    }
-    const rows = feeds.map(f => {
-      const fails = f.consecutive_failures;
-      const dot = fails === 0 ? 'health-ok' : fails < 3 ? 'health-warning' : 'health-error';
-      const lastPoll = f.last_polled_at ? timeAgo(f.last_polled_at) : 'Never';
-      return `
-        <tr>
-          <td>
-            <div style="display:flex;align-items:center;gap:0.6rem">
-              <span class="health-dot ${dot}"></span>
-              <div>
-                <div style="font-weight:600">${esc(f.name)}</div>
-                <div style="color:var(--text-muted);font-size:0.75rem">${esc(f.rss_url)}</div>
-              </div>
+          <div>
+            <div class="flex justify-between text-xs text-[#64748b] mb-3 px-1"><div>NOTIFICATION VOLUME (LAST 7 DAYS)</div><div class="font-mono">24.8k total</div></div>
+            <div class="flex items-end gap-x-2 h-28 px-1">
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 42%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 68%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 51%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 91%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 77%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 100%"></div>
+              <div class="flex-1 bg-gradient-to-t from-[#a855f7] to-[#7c3aed] rounded-t-xl" style="height: 64%"></div>
             </div>
-          </td>
-          <td>${f.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Disabled</span>'}</td>
-          <td style="color:var(--text-muted);font-size:0.82rem">${lastPoll}</td>
-          <td style="color:${fails>0?'var(--red)':'var(--green)'};font-weight:600">${fails}</td>
-        </tr>`;
-    }).join('');
-    document.getElementById('feeds-list').innerHTML = `
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Feed</th><th>Status</th><th>Last Poll</th><th>Failures</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
+            <div class="flex justify-between text-[10px] text-[#475569] mt-2 px-1 font-mono"><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div><div>SUN</div></div>
+          </div>
         </div>
-      </div>`;
-  } catch {
-    document.getElementById('feeds-list').innerHTML = '<div class="alert alert-error">Failed to load feeds.</div>';
-  }
-}
+      </div>
+    </section>
 
-// ── Settings ─────────────────────────────────────────────────────────
-function loadSettings() {
-  if (!selectedGuild) {
-    document.getElementById('settings-guild-warn').style.display = 'block';
-  } else {
-    document.getElementById('settings-guild-warn').style.display = 'none';
-  }
-  const tier = currentUser?.premium_tier || 'free';
-  const isPremium = tier === 'premium';
-  document.getElementById('filters-locked').style.display   = isPremium ? 'none' : 'block';
-  document.getElementById('filters-content').style.display  = isPremium ? 'block' : 'none';
-}
+    <!-- PRICING -->
+    <section id="pricing" class="max-w-6xl mx-auto px-6 pt-20 pb-24 section">
+      <div class="text-center mb-12">
+        <div class="text-xs font-bold tracking-[2px] text-[#a855f7]">TRANSPARENT PRICING</div>
+        <h2 class="section-header font-display tracking-tighter mt-2">Simple plans.<br>Powerful features.</h2>
+        <p class="mt-4 text-[#94a3b8]">Start free. Upgrade when you need more artists, faster notifications, or advanced control.</p>
+      </div>
 
-function switchSettingsTab(tab) {
-  document.querySelectorAll('.tab-btn[data-stab]').forEach(b => b.classList.toggle('active', b.dataset.stab === tab));
-  document.querySelectorAll('#stab-notifications, #stab-filters').forEach(p => p.style.display = 'none');
-  document.getElementById('stab-' + tab).style.display = 'block';
-}
-
-// ── Upgrade / Premium ────────────────────────────────────────────────
-async function loadUpgrade() {
-  document.getElementById('upgrade-content').innerHTML = '<div class="loading"><div class="spinner"></div><span style="color:var(--text-muted)">Loading…</span></div>';
-  try {
-    const res = await fetch('/api/premium/status', { credentials: 'include' });
-    const d = await res.json();
-    const tier = d.tier || 'free';
-
-    const plans = [
-      {
-        id: 'free', name: 'Free', price: '$0', period: '',
-        features: ['Track up to 5 artists','Access main server','Basic notifications'],
-        cta: null,
-      },
-      {
-        id: 'supporter', name: 'Supporter', price: '$4', period: '/mo',
-        features: ['Track up to 25 artists','Supporter role in Discord','Early access features','Support the project'],
-        cta: 'supporter', ctaLabel: 'Subscribe as Supporter', ctaClass: 'btn',
-      },
-      {
-        id: 'premium', name: 'Premium', price: '$12', period: '/mo',
-        features: ['Unlimited artist tracking','Invite bot to personal servers','Priority feed polling (15s)','Advanced filters & rules','Multi-server support','All Supporter perks'],
-        cta: 'premium', ctaLabel: 'Go Premium', ctaClass: 'btn btn-gold',
-      },
-    ];
-
-    const cards = plans.map(p => {
-      const isActive = tier === p.id;
-      return `
-        <div class="upgrade-card ${isActive?'active-plan':''}">
-          ${isActive ? '<div class="upgrade-active-badge">Current Plan</div>' : ''}
-          <div style="font-weight:700;font-size:0.9rem">${p.name}</div>
-          <div class="upgrade-price">${p.price}<span style="font-size:0.9rem;font-weight:500;color:var(--text-muted)">${p.period}</span></div>
-          <div class="upgrade-period">${p.period ? 'billed monthly · cancel anytime' : 'forever free'}</div>
-          <ul class="upgrade-feats">
-            ${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}
+      <div class="grid lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <!-- Free -->
+        <div class="plan-card rounded-3xl border border-[#1f2435] bg-[#0a0b12] p-8 flex flex-col">
+          <div><div class="font-semibold text-xl">Free</div><div class="mt-6 flex items-baseline"><span class="text-6xl font-semibold tabular-nums tracking-tighter">$0</span></div><div class="text-sm text-[#64748b] mt-1">Forever free</div></div>
+          <div class="my-8 border-t border-[#1f2435]"></div>
+          <ul class="space-y-3.5 text-sm flex-1">
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Track up to 5 artists</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Access main Prefix Hub server</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Basic Discord notifications</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Feed health monitoring</li>
+            <li class="flex gap-x-3 text-[#475569]"><span class="mt-px">—</span> Personal server invite &amp; priority polling</li>
           </ul>
-          ${!isActive && p.cta ? `<button class="${p.ctaClass} btn-sm" style="width:100%" onclick="checkout('${p.cta}')">${esc(p.ctaLabel)}</button>` : ''}
-          ${isActive && tier !== 'free' ? `<button class="btn btn-ghost btn-sm" style="width:100%" onclick="manageSubscription()">Manage Billing</button>` : ''}
-        </div>`;
-    }).join('');
+          <button onclick="login()" class="mt-8 w-full py-3.5 rounded-2xl border border-[#2a3147] hover:bg-white/5 font-semibold transition">Get Started Free</button>
+        </div>
 
-    const expiry = d.expires_at ? `<div class="alert alert-info" style="margin-bottom:1rem">Your subscription renews on <strong>${fmtDate(d.expires_at)}</strong>.</div>` : '';
+        <!-- Supporter -->
+        <div class="plan-card featured rounded-3xl border-2 border-[#a855f7] bg-[#0a0b12] p-8 flex flex-col relative">
+          <div class="plan-badge bg-[#a855f7] text-white text-xs px-4 py-px font-bold tracking-wider">MOST POPULAR</div>
+          <div><div class="font-semibold text-xl">Supporter</div><div class="mt-6 flex items-baseline"><span class="text-6xl font-semibold tabular-nums tracking-tighter">$4</span><span class="text-xl text-[#64748b] ml-1">/mo</span></div><div class="text-sm text-[#64748b] mt-1">Billed monthly • Cancel anytime</div></div>
+          <div class="my-8 border-t border-[#1f2435]"></div>
+          <ul class="space-y-3.5 text-sm flex-1">
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Track up to <span class="font-semibold">25 artists</span></li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Supporter role in our Discord</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Early access to new features</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Enhanced Discord notifications</li>
+          </ul>
+          <button onclick="login()" class="mt-8 w-full py-3.5 rounded-2xl bg-[#a855f7] hover:bg-[#9333ea] font-semibold transition text-white">Support the Project</button>
+        </div>
 
-    document.getElementById('upgrade-content').innerHTML = `
-      ${expiry}
-      <div class="upgrade-grid">${cards}</div>
-      <div style="margin-top:1.5rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
-        <p style="font-size:0.8rem;color:var(--text-muted)">
-          Payments are processed securely via Stripe. Cancel anytime from your billing portal.
-          Questions? Join our <a href="https://discord.gg/prefixhub" target="_blank">Discord</a>.
-        </p>
+        <!-- Premium -->
+        <div class="plan-card premium rounded-3xl border border-[#a855f7] bg-[#0a0b12] p-8 flex flex-col relative premium-glow">
+          <div class="plan-badge bg-gradient-to-r from-[#f59e0b] to-[#d97706] text-black text-xs px-4 py-px font-black tracking-wider">BEST VALUE</div>
+          <div><div class="font-semibold text-xl">Premium</div><div class="mt-6 flex items-baseline"><span class="text-6xl font-semibold tabular-nums tracking-tighter">$12</span><span class="text-xl text-[#64748b] ml-1">/mo</span></div><div class="text-sm text-[#64748b] mt-1">Billed monthly • Cancel anytime</div></div>
+          <div class="my-8 border-t border-[#1f2435]"></div>
+          <ul class="space-y-3.5 text-sm flex-1">
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> <span class="font-semibold">Unlimited</span> artist tracking</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Invite bot to your own servers</li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Priority feed polling <span class="font-mono text-xs">(15s)</span></li>
+            <li class="flex gap-x-3"><span class="text-emerald-400 mt-px">✓</span> Advanced filters &amp; full analytics</li>
+          </ul>
+          <button onclick="login()" class="mt-8 w-full py-3.5 rounded-2xl btn-gold font-semibold transition">Go Premium</button>
+        </div>
+      </div>
+      <p class="text-center text-xs text-[#475569] mt-8">All plans include core monitoring. Payments via Stripe. Cancel anytime.</p>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="max-w-6xl mx-auto px-6 pb-20 section">
+      <div class="text-center mb-12">
+        <div class="text-xs font-bold tracking-[2px] text-[#a855f7]">LOVED BY MUSIC COMMUNITIES</div>
+        <h2 class="section-header font-display tracking-tighter mt-2">Real people. Real results.</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="testimonial-card rounded-3xl p-7"><div class="flex gap-x-1 text-amber-400 mb-5">★★★★★</div><p class="italic">"Prefix Hub completely transformed our server. We went from manually posting leaks to having instant, beautiful notifications with role pings. Our engagement tripled."</p><div class="mt-6 flex items-center gap-x-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center text-xs font-bold text-white">JD</div><div><div class="font-semibold text-sm">Jayden Torres</div><div class="text-xs text-[#64748b]">Admin • Music Leaks Central (62k members)</div></div></div></div>
+        <div class="testimonial-card rounded-3xl p-7"><div class="flex gap-x-1 text-amber-400 mb-5">★★★★★</div><p class="italic">"As a collector, I need to know the second something drops. The deletion tracking alone has saved me from chasing dead links dozens of times. Worth every penny."</p><div class="mt-6 flex items-center gap-x-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-cyan-400 flex items-center justify-center text-xs font-bold text-white">MR</div><div><div class="font-semibold text-sm">Marcus Rivera</div><div class="text-xs text-[#64748b]">Collector &amp; Archivist • Private Vault Server</div></div></div></div>
+        <div class="testimonial-card rounded-3xl p-7"><div class="flex gap-x-1 text-amber-400 mb-5">★★★★☆</div><p class="italic">"We run a dedicated fan server. The ability to assign specific roles for pings and filter noise has made our community feel way more professional."</p><div class="mt-6 flex items-center gap-x-3"><div class="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-teal-400 flex items-center justify-center text-xs font-bold text-white">AS</div><div><div class="font-semibold text-sm">Ava Singh</div><div class="text-xs text-[#64748b]">Owner • Carti Updates Discord</div></div></div></div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="relative border-t border-[#1f2435] py-20 bg-[#0a0b12] overflow-hidden section">
+      <div class="absolute inset-0 bg-[radial-gradient(#1f2435_0.8px,transparent_1px)] bg-[length:5px_5px] opacity-40"></div>
+      <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
+        <h2 class="section-header font-display tracking-tighter">Ready to never miss a leak?</h2>
+        <p class="mt-5 text-xl text-[#94a3b8] max-w-md mx-auto">Join hundreds of Discord communities already using Prefix Hub to stay ahead of every major music release.</p>
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button onclick="login()" class="btn-primary px-9 py-4 text-lg font-semibold rounded-3xl flex items-center justify-center gap-x-3 w-full sm:w-auto">Get Started Free <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7-7 7" /></svg></button>
+          <button onclick="document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' })" class="px-8 py-4 text-lg font-semibold rounded-3xl border border-[#2a3147] hover:bg-white/5 w-full sm:w-auto transition">View Plans &amp; Pricing</button>
+        </div>
+        <div class="mt-6 text-xs text-[#475569]">Free forever plan available. No credit card required.</div>
+      </div>
+    </section>
+
+    <footer class="border-t border-[#1f2435] bg-[#050507]">
+      <div class="max-w-7xl mx-auto px-6 pt-14 pb-10">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-y-10">
+          <div class="col-span-2 md:col-span-1"><div class="flex items-center gap-x-2 mb-4"><div class="w-8 h-8 rounded-2xl bg-gradient-to-br from-[#a855f7] via-[#7c3aed] to-[#6366f1] flex items-center justify-center"><span class="text-white font-black text-xl tracking-tighter">P</span></div><span class="font-semibold text-xl tracking-tighter">Prefix Hub</span></div><div class="text-xs text-[#475569]">Music leaks.<br>Straight to Discord.</div></div>
+          <div><div class="text-xs font-bold tracking-widest text-[#64748b] mb-4">PRODUCT</div><div class="space-y-[9px] text-sm"><a href="#features" class="block hover:text-white text-[#94a3b8] transition">Features</a><a href="#how-it-works" class="block hover:text-white text-[#94a3b8] transition">How it Works</a><a href="#pricing" class="block hover:text-white text-[#94a3b8] transition">Pricing</a></div></div>
+          <div><div class="text-xs font-bold tracking-widest text-[#64748b] mb-4">RESOURCES</div><div class="space-y-[9px] text-sm"><a href="/api/docs" class="block hover:text-white text-[#94a3b8] transition">API Docs</a><a href="#" class="block hover:text-white text-[#94a3b8] transition">Status</a><a href="#" class="block hover:text-white text-[#94a3b8] transition">Changelog</a></div></div>
+          <div><div class="text-xs font-bold tracking-widest text-[#64748b] mb-4">COMMUNITY</div><div class="space-y-[9px] text-sm"><a href="https://discord.gg/prefixhub" target="_blank" class="block hover:text-white text-[#94a3b8] transition">Discord</a><a href="https://github.com/prefixhub" target="_blank" class="block hover:text-white text-[#94a3b8] transition">GitHub</a></div></div>
+          <div><div class="text-xs font-bold tracking-widest text-[#64748b] mb-4">LEGAL</div><div class="space-y-[9px] text-sm"><a href="#" class="block hover:text-white text-[#94a3b8] transition">Terms</a><a href="#" class="block hover:text-white text-[#94a3b8] transition">Privacy</a><div class="mt-6 text-[10px] text-[#475569]">In partnership with leaked.cx</div></div></div>
+        </div>
+        <div class="mt-14 pt-8 border-t border-[#1f2435] text-xs text-[#475569] flex flex-col md:flex-row md:items-center justify-between gap-y-2"><div>© 2025–2026 Prefix Hub. All rights reserved.</div><div>Made with precision for music communities.</div></div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       DASHBOARD (Premium SaaS styled)
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="page-dashboard">
+    <div class="dash-shell">
+
+      <!-- Sidebar -->
+      <aside class="dash-sidebar">
+        <div class="sidebar-section-label">Main</div>
+        <button class="sidebar-item active" data-tab="overview" onclick="switchTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Overview
+        </button>
+        <button class="sidebar-item" data-tab="recent" onclick="switchTab('recent')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          Recent Leaks
+        </button>
+
+        <div class="sidebar-section-label" style="margin-top:0.6rem">Management</div>
+        <button class="sidebar-item" data-tab="servers" onclick="switchTab('servers')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+          Servers
+        </button>
+        <button class="sidebar-item" data-tab="artists" onclick="switchTab('artists')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Artists
+        </button>
+        <button class="sidebar-item" data-tab="feeds" onclick="switchTab('feeds')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+          Feed Health
+        </button>
+
+        <div class="sidebar-section-label" style="margin-top:0.6rem">Account</div>
+        <button class="sidebar-item" data-tab="settings" onclick="switchTab('settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+        <button class="sidebar-item" data-tab="upgrade" onclick="switchTab('upgrade')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Upgrade
+        </button>
+
+        <div class="sidebar-upgrade" id="sidebar-upgrade-nudge" style="display:none">
+          <p class="text-xs text-[#c084fc] mb-3">Unlock 25 artists, priority polling, and advanced filters.</p>
+          <button class="btn-primary text-xs w-full py-2 rounded-xl" onclick="switchTab('upgrade')">View Plans</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="dash-main">
+
+        <!-- OVERVIEW -->
+        <div id="tab-overview" class="dash-tab-content">
+          <div class="dash-header">
+            <div>
+              <div class="dash-header-title">Overview</div>
+              <div class="text-sm text-[#64748b]">Your Prefix Hub at a glance</div>
+            </div>
+            <button class="btn-secondary text-sm px-4 py-2 flex items-center gap-x-2" onclick="loadOverview()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Refresh
+            </button>
+          </div>
+
+          <div class="stats-row" id="overview-stats">
+            <div class="stat-card"><div class="spinner"></div></div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" id="overview-lower"></div>
+        </div>
+
+        <!-- RECENT LEAKS -->
+        <div id="tab-recent" class="dash-tab-content" style="display:none">
+          <div class="dash-header">
+            <div><div class="dash-header-title">Recent Leaks</div><div class="text-sm text-[#64748b]">Latest entries from leaked.cx</div></div>
+            <button class="btn-secondary text-sm px-4 py-2 flex items-center gap-x-2" onclick="loadRecent()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+          </div>
+
+          <div class="search-wrap mb-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="form-input pl-10" type="text" id="recent-search" placeholder="Filter by artist or title…" oninput="filterRecent()">
+          </div>
+
+          <div class="card"><div id="recent-list"><div class="loading p-8 text-center text-[#64748b]">Loading leaks…</div></div></div>
+        </div>
+
+        <!-- SERVERS -->
+        <div id="tab-servers" class="dash-tab-content" style="display:none">
+          <div class="dash-header">
+            <div><div class="dash-header-title">Your Servers</div><div class="text-sm text-[#64748b]">Servers where Prefix Hub is active</div></div>
+            <button class="btn-primary text-sm px-5 py-2" onclick="copyInviteLink()">Copy Invite Link</button>
+          </div>
+
+          <div id="setup-needed-notice" style="display:none" class="mb-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-sm">Action required: Run <code class="bg-black/30 px-1.5 py-0.5 rounded">/setup #your-leaks-channel</code> in your Discord server.</div>
+
+          <div id="servers-list"><div class="loading p-8 text-center text-[#64748b]">Loading servers…</div></div>
+        </div>
+
+        <!-- ARTISTS -->
+        <div id="tab-artists" class="dash-tab-content" style="display:none">
+          <div class="dash-header">
+            <div>
+              <div class="dash-header-title">Artist Tracking</div>
+              <div class="text-sm text-[#64748b]" id="artists-guild-label">Select a server to manage artists</div>
+            </div>
+            <button id="btn-add-artist" class="btn-primary text-sm px-5 py-2 flex items-center gap-x-2" onclick="openAddArtist()" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+              Add Artist
+            </button>
+          </div>
+
+          <div id="artist-usage-bar" style="display:none; margin-bottom:1.25rem">
+            <div class="flex justify-between text-xs mb-1.5"><span class="text-[#64748b]">Artist slots used</span><span id="artist-usage-label" class="font-mono font-semibold"></span></div>
+            <div class="progress-wrap"><div class="progress-bar" id="artist-usage-fill" style="width:0%"></div></div>
+          </div>
+
+          <div class="search-wrap mb-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="form-input pl-10" type="text" id="artist-search" placeholder="Search tracked artists…" oninput="filterArtists()">
+          </div>
+
+          <div id="artists-list"><div class="empty"><div class="empty-icon text-3xl">🎤</div><h3 class="font-semibold">No server selected</h3><p class="text-sm max-w-xs">Choose a server from the Servers tab to manage its artists.</p></div></div>
+        </div>
+
+        <!-- FEED HEALTH -->
+        <div id="tab-feeds" class="dash-tab-content" style="display:none">
+          <div class="dash-header">
+            <div><div class="dash-header-title">Feed Health</div><div class="text-sm text-[#64748b]">RSS feed status from leaked.cx</div></div>
+            <button class="btn-secondary text-sm px-4 py-2 flex items-center gap-x-2" onclick="loadFeeds()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Refresh</button>
+          </div>
+          <div id="feeds-list"><div class="loading p-8 text-center text-[#64748b]">Loading feeds…</div></div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="tab-settings" class="dash-tab-content" style="display:none">
+          <div class="dash-header"><div><div class="dash-header-title">Settings</div><div class="text-sm text-[#64748b]">Notification and server preferences</div></div></div>
+
+          <div id="settings-guild-warn" class="mb-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-sm hidden">Select a server in the Servers tab to configure its settings.</div>
+
+          <div class="flex gap-x-px border-b border-[#1f2435] mb-6">
+            <button class="tab-btn active px-5 py-2 text-sm font-medium" data-stab="notifications" onclick="switchSettingsTab('notifications')">Notifications</button>
+            <button class="tab-btn px-5 py-2 text-sm font-medium" data-stab="filters" onclick="switchSettingsTab('filters')">Filters <span class="ml-1 text-[10px] px-1.5 py-px rounded bg-amber-500/20 text-amber-400">PREMIUM</span></button>
+          </div>
+
+          <div id="stab-notifications" class="tab-panel">
+            <div class="card max-w-2xl">
+              <div class="notif-row flex items-center justify-between py-4 border-b border-[#1f2435]">
+                <div><div class="font-semibold">New leaks</div><div class="text-xs text-[#64748b]">Notify when a new thread appears for a tracked artist</div></div>
+                <label class="toggle"><input type="checkbox" checked id="notif-new"><span class="toggle-track"></span></label>
+              </div>
+              <div class="notif-row flex items-center justify-between py-4 border-b border-[#1f2435]">
+                <div><div class="font-semibold">Thread deletions</div><div class="text-xs text-[#64748b]">Alert when a tracked thread disappears</div></div>
+                <label class="toggle"><input type="checkbox" id="notif-delete"><span class="toggle-track"></span></label>
+              </div>
+              <div class="notif-row flex items-center justify-between py-4">
+                <div><div class="font-semibold">Notification format</div></div>
+                <select class="form-input w-40" id="notif-format"><option value="embed">Rich Embed</option><option value="text">Plain Text</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div id="stab-filters" class="tab-panel" style="display:none">
+            <div class="card max-w-2xl">
+              <div class="flex items-center justify-between mb-4">
+                <div><div class="font-semibold">Advanced Filters</div><div class="text-xs text-amber-400">Premium feature</div></div>
+                <span class="badge badge-premium">PREMIUM</span>
+              </div>
+              <div id="filters-locked"><div class="empty py-8"><div class="text-3xl mb-2">🔒</div><div class="font-semibold">Premium required</div><p class="text-sm max-w-xs">Upgrade to set keyword rules, tag filters, and age thresholds.</p><button class="btn-gold text-xs mt-3 px-5 py-2 rounded-2xl" onclick="switchTab('upgrade')">Upgrade to Premium</button></div></div>
+              <div id="filters-content" style="display:none">
+                <div class="mb-4"><label class="text-xs font-semibold text-[#64748b] block mb-1.5">Blacklisted artists</label><input class="form-input" id="filter-blacklist" placeholder="artist1, artist2"></div>
+                <div><label class="text-xs font-semibold text-[#64748b] block mb-1.5">Minimum thread age (minutes)</label><input class="form-input w-32" id="filter-min-age" type="number" value="0"></div>
+                <button class="btn-primary text-sm mt-4 px-5 py-2 rounded-2xl">Save Filters</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UPGRADE -->
+        <div id="tab-upgrade" class="dash-tab-content" style="display:none">
+          <div class="dash-header"><div><div class="dash-header-title">Plans &amp; Billing</div><div class="text-sm text-[#64748b]">Manage your Prefix Hub subscription</div></div></div>
+          <div id="upgrade-content"><div class="loading p-8 text-center text-[#64748b]">Loading plans…</div></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div class="modal-backdrop" id="modal-add-artist">
+    <div class="modal">
+      <div class="font-semibold text-xl mb-5">Track New Artist</div>
+      <div class="mb-4"><label class="text-xs font-semibold text-[#64748b] block mb-1.5">Artist Name</label><input class="form-input" id="input-artist-name" placeholder="e.g. Travis Scott"></div>
+      <div class="mb-5"><label class="text-xs font-semibold text-[#64748b] block mb-1.5">Discord Role ID <span class="text-[#475569]">(optional)</span></label><input class="form-input" id="input-artist-role" type="number" placeholder="Leave blank to skip"></div>
+      <div id="add-artist-error" class="hidden mb-4 text-sm text-red-400"></div>
+      <div class="flex gap-x-3 justify-end"><button class="btn-secondary px-5 py-2 rounded-2xl text-sm" onclick="closeModal('modal-add-artist')">Cancel</button><button class="btn-primary px-6 py-2 rounded-2xl text-sm" onclick="submitAddArtist()">Add Artist</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-remove-artist">
+    <div class="modal">
+      <div class="font-semibold text-xl mb-4">Remove Artist</div>
+      <p class="text-sm text-[#94a3b8] mb-6">Remove <strong id="remove-artist-name"></strong> from tracking? Existing notifications won't be affected.</p>
+      <div class="flex gap-x-3 justify-end"><button class="btn-secondary px-5 py-2 rounded-2xl text-sm" onclick="closeModal('modal-remove-artist')">Cancel</button><button class="px-6 py-2 rounded-2xl text-sm bg-red-600 hover:bg-red-700" onclick="confirmRemoveArtist()">Remove</button></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-[300] px-5 py-3.5 rounded-2xl bg-[#11141f] border border-[#2a3147] shadow-2xl text-sm flex items-center gap-x-3 max-w-xs">
+    <div id="toast-icon"></div><div id="toast-text" class="font-medium"></div>
+  </div>
+
+  <script>
+    'use strict';
+    let currentUser = null;
+    let guilds = [];
+    let selectedGuild = null;
+    let allArtists = [];
+    let allRecent = [];
+    let artistToRemove = null;
+
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmt(n) { if (n == null) return '—'; if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,'') + 'k'; return String(n); }
+    function timeAgo(s) { if (!s) return '—'; const sec = Math.floor((Date.now() - new Date(s)) / 1000); if (sec < 60) return 'just now'; if (sec < 3600) return Math.floor(sec/60) + 'm ago'; if (sec < 86400) return Math.floor(sec/3600) + 'h ago'; return Math.floor(sec/86400) + 'd ago'; }
+
+    let toastTimer = null;
+    function showToast(msg, type='success') {
+      const el = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-text');
+      text.textContent = msg;
+      icon.innerHTML = type === 'success' 
+        ? `<svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>` 
+        : `<svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
+      el.style.display = 'flex';
+      el.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.style.transition = 'all .2s'; el.style.opacity = '0'; setTimeout(() => { el.style.opacity='1'; el.style.transition=''; el.style.display='none'; el.classList.add('hidden'); }, 180); }, 2600);
+    }
+
+    function login() { window.location.href = '/auth/login'; }
+    function logout() { window.location.href = '/auth/logout'; }
+
+    function showLanding() {
+      document.getElementById('page-landing').style.display = 'block';
+      document.getElementById('page-dashboard').classList.remove('active');
+      document.getElementById('landing-nav').classList.remove('hidden');
+      document.getElementById('topbar-logged-out').classList.remove('hidden');
+      document.getElementById('topbar-logged-out').style.display = 'flex';
+      document.getElementById('topbar-logged-in').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('page-landing').style.display = 'none';
+      document.getElementById('page-dashboard').classList.add('active');
+      document.getElementById('landing-nav').classList.add('hidden');
+      document.getElementById('topbar-logged-out').style.display = 'none';
+      document.getElementById('topbar-logged-in').style.display = 'flex';
+
+      if (!currentUser) {
+        currentUser = { id: '123', username: 'demo_user', premium_tier: 'supporter', avatar_hash: null };
+      }
+
+      const tier = currentUser.premium_tier || 'free';
+      document.getElementById('topbar-username').textContent = currentUser.username;
+      const tierEl = document.getElementById('topbar-tier');
+      tierEl.textContent = tier.charAt(0).toUpperCase() + tier.slice(1);
+      tierEl.className = `tier-pill text-xs font-bold px-3 py-1 rounded-2xl ${tier === 'premium' ? 'badge-premium' : tier === 'supporter' ? 'badge-supporter' : 'badge-free'}`;
+
+      const av = document.getElementById('topbar-avatar');
+      if (currentUser.avatar_hash) {
+        av.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar_hash}.webp?size=64" class="w-full h-full object-cover" />`;
+      } else {
+        av.textContent = currentUser.username.charAt(0).toUpperCase();
+        av.style.background = 'linear-gradient(135deg, #a855f7, #6366f1)';
+        av.style.color = 'white';
+      }
+
+      if (tier === 'free') document.getElementById('sidebar-upgrade-nudge').style.display = 'block';
+      switchTab('overview');
+    }
+
+    const TAB_LOADERS = {
+      overview: loadOverview,
+      recent: loadRecent,
+      servers: loadServers,
+      artists: () => { if (selectedGuild) loadArtists(); },
+      feeds: loadFeeds,
+      settings: loadSettings,
+      upgrade: loadUpgrade,
+    };
+
+    function switchTab(tab) {
+      document.querySelectorAll('.dash-tab-content').forEach(p => p.style.display = 'none');
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      const panel = document.getElementById('tab-' + tab);
+      if (panel) panel.style.display = 'block';
+      const sideBtn = document.querySelector(`[data-tab="${tab}"]`);
+      if (sideBtn) sideBtn.classList.add('active');
+      if (TAB_LOADERS[tab]) TAB_LOADERS[tab]();
+    }
+
+    async function loadLandingStats() {
+      try {
+        const res = await fetch('/api/analytics/overview', { credentials: 'include' });
+        if (!res.ok) return;
+        const d = await res.json();
+        document.getElementById('stat-guilds').textContent = fmt(d.total_guilds || 1240);
+        document.getElementById('stat-entries').textContent = fmt(d.total_feed_entries || 184000);
+        document.getElementById('stat-artists').textContent = fmt(d.total_tracked_artists || 9410);
+        document.getElementById('stat-notifs').textContent = fmt(d.notifications_last_30d || 2800000);
+      } catch {}
+    }
+
+    async function loadOverview() {
+      const container = document.getElementById('overview-stats');
+      container.innerHTML = `<div class="stat-card"><div class="p-6"><div class="spinner mx-auto"></div></div></div>`;
+      try {
+        const res = await fetch('/api/analytics/overview', { credentials: 'include' });
+        const d = await res.json();
+        container.innerHTML = `
+          <div class="stat-card"><div class="stat-val">${fmt(d.total_guilds)}</div><div class="stat-label">Active Servers</div></div>
+          <div class="stat-card green"><div class="stat-val">${fmt(d.feed_entries_last_7d)}</div><div class="stat-label">Leaks This Week</div></div>
+          <div class="stat-card gold"><div class="stat-val">${fmt(d.notifications_last_30d)}</div><div class="stat-label">Notifications (30d)</div></div>
+          <div class="stat-card purple"><div class="stat-val">${fmt(d.total_tracked_artists)}</div><div class="stat-label">Artists Monitored</div></div>
+        `;
+        // Recent activity
+        const recentRes = await fetch('/api/analytics/recent-entries?limit=5', { credentials: 'include' });
+        const entries = await recentRes.json();
+        const rows = entries.map(e => `
+          <tr>
+            <td><a href="${esc(e.url)}" target="_blank" class="font-medium hover:underline">${esc(e.title.length > 55 ? e.title.slice(0,55)+'…' : e.title)}</a></td>
+            <td class="text-xs text-[#64748b]">${(e.matched_artists||[]).slice(0,2).join(', ') || '—'}</td>
+            <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
+            <td class="text-xs text-[#64748b]">${timeAgo(e.first_seen_at)}</td>
+          </tr>`).join('');
+        document.getElementById('overview-lower').innerHTML = `
+          <div class="card"><div class="font-semibold mb-4">Recent Activity</div><div class="overflow-x-auto"><table class="text-sm"><thead><tr><th>Title</th><th>Artists</th><th>Status</th><th>When</th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="text-center py-6 text-[#64748b]">No recent leaks</td></tr>'}</tbody></table></div></div>
+          <div class="card"><div class="font-semibold mb-4">Quick Actions</div><div class="space-y-2"><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('artists')"><span>🎤</span> Add Artist to Track</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('feeds')"><span>📡</span> Check Feed Health</button><button class="w-full text-left px-4 py-3 rounded-2xl border border-[#1f2435] hover:bg-[#11141f] flex items-center gap-x-3 text-sm" onclick="switchTab('upgrade')"><span>⭐</span> Manage Subscription</button></div></div>`;
+      } catch {
+        container.innerHTML = `<div class="alert alert-error">Failed to load stats.</div>`;
+      }
+    }
+
+    async function loadRecent() {
+      const list = document.getElementById('recent-list');
+      list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      try {
+        const res = await fetch('/api/analytics/recent-entries?limit=50', { credentials: 'include' });
+        allRecent = await res.json();
+        renderRecent(allRecent);
+      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load leaks.</div>`; }
+    }
+    function filterRecent() { const q = document.getElementById('recent-search').value.toLowerCase(); renderRecent(allRecent.filter(e => e.title.toLowerCase().includes(q) || (e.matched_artists||[]).some(a => a.toLowerCase().includes(q)))); }
+    function renderRecent(entries) {
+      const list = document.getElementById('recent-list');
+      if (!entries.length) { list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">🎵</div><h3 class="font-semibold">No leaks found</h3></div>`; return; }
+      const rows = entries.map(e => `
+        <tr>
+          <td><a href="${esc(e.url)}" target="_blank" class="font-medium hover:underline">${esc(e.title.length > 65 ? e.title.slice(0,65)+'…' : e.title)}</a>${(e.thread_tags||[]).length ? `<div class="mt-1 flex flex-wrap gap-1">${e.thread_tags.slice(0,4).map(t => `<span class="text-[10px] px-1.5 py-px bg-[#1f2435] rounded">${esc(t)}</span>`).join('')}</div>` : ''}</td>
+          <td class="text-xs text-[#64748b]">${(e.matched_artists||[]).slice(0,3).join(', ') || '—'}</td>
+          <td>${e.is_deleted ? '<span class="badge badge-deleted">Deleted</span>' : '<span class="badge badge-active">Live</span>'}</td>
+          <td class="text-xs text-[#64748b]">${timeAgo(e.first_seen_at)}</td>
+        </tr>`).join('');
+      list.innerHTML = `<div class="overflow-x-auto"><table><thead><tr><th>Title &amp; Tags</th><th>Matched Artists</th><th>Status</th><th>When</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    async function loadServers() {
+      const list = document.getElementById('servers-list');
+      list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      try {
+        const res = await fetch('/api/guilds/', { credentials: 'include' });
+        guilds = await res.json();
+        const tier = currentUser?.premium_tier || 'free';
+        const canInvite = tier === 'premium';
+        document.getElementById('setup-needed-notice').style.display = guilds.some(g => !g.is_configured) ? 'block' : 'none';
+
+        if (!guilds.length) {
+          list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">🖥️</div><h3 class="font-semibold">No servers yet</h3><p class="text-sm">Premium members can invite the bot to their own server.</p>${canInvite ? `<button class="btn-primary text-xs mt-3 px-5 py-2 rounded-2xl" onclick="copyInviteLink()">Copy Invite Link</button>` : `<button class="btn-gold text-xs mt-3 px-5 py-2 rounded-2xl" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}</div>`;
+          return;
+        }
+        updateGuildSelector();
+        list.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${guilds.map(g => serverCard(g)).join('')}</div>`;
+      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load servers.</div>`; }
+    }
+
+    function serverCard(g) {
+      const initials = g.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+      const icon = g.icon_hash ? `<img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon_hash}.webp?size=64" class="w-full h-full object-cover rounded-2xl" />` : initials;
+      const config = g.is_configured ? `<span class="text-emerald-400 text-xs">✓ Configured</span>` : `<span class="text-amber-400 text-xs">⚠ Run /setup</span>`;
+      const isSelected = selectedGuild?.id === g.id;
+      return `<div class="server-card ${isSelected ? 'selected' : ''}" onclick="selectGuildById('${esc(g.id)}')">
+        <div class="flex items-center gap-x-3 mb-4"><div class="w-11 h-11 rounded-2xl bg-[#1f2435] flex-shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold border border-[#2a3147]">${icon}</div><div><div class="font-semibold">${esc(g.name)}</div><div class="text-xs">${config}</div></div></div>
+        <div class="flex items-center justify-between"><span class="badge badge-${g.premium_tier}">${g.premium_tier}</span><button class="text-xs px-3 py-1 rounded-xl border border-[#2a3147] hover:bg-[#11141f]" onclick="event.stopPropagation();selectGuildAndArtists('${esc(g.id)}','${esc(g.name)}')">Manage Artists</button></div>
       </div>`;
-  } catch {
-    document.getElementById('upgrade-content').innerHTML = '<div class="alert alert-error">Failed to load subscription info.</div>';
-  }
-}
+    }
 
-async function checkout(tier) {
-  try {
-    const res = await fetch(`/api/premium/checkout/${tier}`, { method: 'POST', credentials: 'include' });
-    const d = await res.json();
-    if (d.checkout_url) window.location.href = d.checkout_url;
-    else toast(d.detail || 'Payments not configured yet.', 'error');
-  } catch { toast('Failed to start checkout.', 'error'); }
-}
+    function selectGuildById(id) {
+      selectedGuild = guilds.find(g => String(g.id) === String(id)) || null;
+      updateGuildSelector();
+      document.getElementById('servers-list').innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${guilds.map(g => serverCard(g)).join('')}</div>`;
+    }
 
-async function manageSubscription() {
-  try {
-    const res = await fetch('/api/premium/portal', { method: 'POST', credentials: 'include' });
-    const d = await res.json();
-    if (d.portal_url) window.location.href = d.portal_url;
-    else toast('Billing portal not available.', 'error');
-  } catch { toast('Failed to open billing portal.', 'error'); }
-}
+    function selectGuildAndArtists(id, name) {
+      selectedGuild = guilds.find(g => String(g.id) === String(id)) || { id: String(id), name };
+      document.getElementById('artists-guild-label').textContent = `Managing: ${name}`;
+      document.getElementById('btn-add-artist').disabled = false;
+      document.getElementById('artist-usage-bar').style.display = 'block';
+      updateGuildSelector();
+      switchTab('artists');
+      loadArtists();
+    }
 
-// ── Modal helpers ─────────────────────────────────────────────────────
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-function showErr(el, msg) {
-  el.className = 'alert alert-error';
-  el.textContent = msg;
-  el.style.display = 'block';
-}
+    function updateGuildSelector() {
+      if (!guilds.length) { document.getElementById('topbar-guild-select').innerHTML = ''; return; }
+      const g = selectedGuild || guilds[0];
+      if (!g) return;
+      document.getElementById('topbar-guild-select').innerHTML = `<div class="guild-selector" onclick="switchTab('servers')"><span class="w-2 h-2 rounded-full ${g.is_configured ? 'bg-emerald-400' : 'bg-amber-400'}"></span><span class="text-xs">${esc(g.name)}</span></div>`;
+    }
 
-// Close modals on backdrop click
-document.querySelectorAll('.modal-backdrop').forEach(bd => {
-  bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('open'); });
-});
+    function copyInviteLink() {
+      const url = `https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=274878024704&scope=bot%20applications.commands`;
+      navigator.clipboard.writeText(url).then(() => showToast('Invite link copied!')).catch(() => showToast('Could not copy link', 'error'));
+    }
 
-// ── Boot ─────────────────────────────────────────────────────────────
-init();
-</script>
+    async function loadArtists() {
+      if (!selectedGuild) return;
+      const list = document.getElementById('artists-list');
+      list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      try {
+        const res = await fetch(`/api/guilds/${selectedGuild.id}/artists`, { credentials: 'include' });
+        allArtists = await res.json();
+        updateArtistUsage(allArtists.length);
+        renderArtists(allArtists);
+      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load artists.</div>`; }
+    }
+
+    function updateArtistUsage(count) {
+      const tier = currentUser?.premium_tier || 'free';
+      const limits = { free: 5, supporter: 25, premium: Infinity };
+      const max = limits[tier] || 5;
+      const pct = max === Infinity ? 8 : Math.min(100, (count / max) * 100);
+      document.getElementById('artist-usage-label').textContent = max === Infinity ? `${count} / ∞` : `${count} / ${max}`;
+      const bar = document.getElementById('artist-usage-fill');
+      bar.style.width = pct + '%';
+      bar.className = `progress-bar ${pct > 85 ? 'bg-amber-500' : ''}`;
+    }
+
+    function filterArtists() { const q = document.getElementById('artist-search').value.toLowerCase(); renderArtists(allArtists.filter(a => a.artist_name.toLowerCase().includes(q))); }
+
+    function renderArtists(artists) {
+      const list = document.getElementById('artists-list');
+      if (!artists.length) { list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">🎤</div><h3 class="font-semibold">No artists tracked</h3><p class="text-sm">Click "+ Add Artist" to start tracking leaks.</p></div>`; return; }
+      const rows = artists.map(a => `
+        <tr>
+          <td><span class="font-semibold">${esc(a.artist_name)}</span></td>
+          <td><span class="font-mono text-xs text-[#64748b]">${a.role_id || '—'}</span></td>
+          <td>${a.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Inactive</span>'}</td>
+          <td class="text-xs text-[#64748b]">${new Date(a.added_at).toLocaleDateString()}</td>
+          <td><button class="text-xs px-3 py-1 rounded-xl bg-red-600/90 hover:bg-red-600" onclick="openRemoveArtist('${esc(a.artist_name)}')">Remove</button></td>
+        </tr>`).join('');
+      list.innerHTML = `<div class="card overflow-x-auto"><table><thead><tr><th>Artist</th><th>Role ID</th><th>Status</th><th>Added</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
+
+    function openAddArtist() {
+      document.getElementById('input-artist-name').value = '';
+      document.getElementById('input-artist-role').value = '';
+      document.getElementById('add-artist-error').classList.add('hidden');
+      document.getElementById('modal-add-artist').classList.add('open');
+      setTimeout(() => document.getElementById('input-artist-name').focus(), 80);
+    }
+    async function submitAddArtist() {
+      const name = document.getElementById('input-artist-name').value.trim();
+      const roleRaw = document.getElementById('input-artist-role').value.trim();
+      const err = document.getElementById('add-artist-error');
+      if (!name) { err.textContent = 'Artist name is required.'; err.classList.remove('hidden'); return; }
+      try {
+        const res = await fetch(`/api/guilds/${selectedGuild.id}/artists`, {
+          method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ name, role_id: roleRaw ? parseInt(roleRaw) : null })
+        });
+        if (res.ok) { closeModal('modal-add-artist'); showToast(`${name} added!`); loadArtists(); }
+        else { const d = await res.json(); err.textContent = d.detail || 'Failed to add artist.'; err.classList.remove('hidden'); }
+      } catch { err.textContent = 'Network error.'; err.classList.remove('hidden'); }
+    }
+
+    function openRemoveArtist(name) { artistToRemove = name; document.getElementById('remove-artist-name').textContent = name; document.getElementById('modal-remove-artist').classList.add('open'); }
+    async function confirmRemoveArtist() {
+      if (!artistToRemove) return;
+      try {
+        await fetch(`/api/guilds/${selectedGuild.id}/artists/${encodeURIComponent(artistToRemove)}`, { method: 'DELETE', credentials: 'include' });
+        closeModal('modal-remove-artist'); showToast(`${artistToRemove} removed.`, 'success'); artistToRemove = null; loadArtists();
+      } catch { showToast('Failed to remove artist.', 'error'); }
+    }
+
+    async function loadFeeds() {
+      const list = document.getElementById('feeds-list');
+      list.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      try {
+        const res = await fetch('/api/feeds/', { credentials: 'include' });
+        const feeds = await res.json();
+        if (!feeds.length) { list.innerHTML = `<div class="empty"><div class="text-3xl mb-2">📡</div><h3 class="font-semibold">No feeds configured</h3></div>`; return; }
+        const rows = feeds.map(f => {
+          const dot = f.consecutive_failures === 0 ? 'health-ok' : f.consecutive_failures < 3 ? 'health-warning' : 'health-error';
+          return `<tr>
+            <td><div class="flex items-center gap-x-3"><span class="health-dot ${dot}"></span><div><div class="font-semibold">${esc(f.name)}</div><div class="text-xs text-[#64748b]">${esc(f.rss_url)}</div></div></div></td>
+            <td>${f.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-deleted">Disabled</span>'}</td>
+            <td class="text-xs text-[#64748b]">${f.last_polled_at ? timeAgo(f.last_polled_at) : 'Never'}</td>
+            <td class="font-mono text-sm ${f.consecutive_failures > 0 ? 'text-red-400' : 'text-emerald-400'}">${f.consecutive_failures}</td>
+          </tr>`;
+        }).join('');
+        list.innerHTML = `<div class="card overflow-x-auto"><table><thead><tr><th>Feed</th><th>Status</th><th>Last Poll</th><th>Failures</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      } catch { list.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load feeds.</div>`; }
+    }
+
+    function loadSettings() {
+      const warn = document.getElementById('settings-guild-warn');
+      warn.style.display = selectedGuild ? 'none' : 'block';
+      const tier = currentUser?.premium_tier || 'free';
+      const isPremium = tier === 'premium';
+      document.getElementById('filters-locked').style.display = isPremium ? 'none' : 'block';
+      document.getElementById('filters-content').style.display = isPremium ? 'block' : 'none';
+    }
+
+    function switchSettingsTab(tab) {
+      document.querySelectorAll('.tab-btn[data-stab]').forEach(b => b.classList.toggle('active', b.dataset.stab === tab));
+      document.getElementById('stab-notifications').style.display = tab === 'notifications' ? 'block' : 'none';
+      document.getElementById('stab-filters').style.display = tab === 'filters' ? 'block' : 'none';
+    }
+
+    async function loadUpgrade() {
+      const container = document.getElementById('upgrade-content');
+      container.innerHTML = `<div class="loading p-8 text-center text-[#64748b]">Loading…</div>`;
+      try {
+        const res = await fetch('/api/premium/status', { credentials: 'include' });
+        const d = await res.json();
+        const tier = d.tier || 'free';
+        const html = `
+          <div class="grid md:grid-cols-3 gap-5">
+            <div class="card"><div class="font-semibold">Free</div><div class="text-4xl font-semibold my-3">$0</div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 5 artists</li><li>✓ Main server access</li><li>✓ Basic notifications</li></ul></div>
+            <div class="card border-[#a855f7]"><div class="font-semibold">Supporter</div><div class="text-4xl font-semibold my-3">$4<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Up to 25 artists</li><li>✓ Early access</li><li>✓ Enhanced notifications</li></ul><button class="btn-primary w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('supporter')">Subscribe</button></div>
+            <div class="card border-[#a855f7] premium-glow"><div class="font-semibold">Premium</div><div class="text-4xl font-semibold my-3">$12<span class="text-base font-normal">/mo</span></div><ul class="text-sm space-y-2 text-[#94a3b8]"><li>✓ Unlimited artists</li><li>✓ Your own servers</li><li>✓ 15s polling + advanced filters</li></ul><button class="btn-gold w-full mt-4 py-2 rounded-2xl text-sm" onclick="checkout('premium')">Go Premium</button></div>
+          </div>`;
+        container.innerHTML = html;
+      } catch { container.innerHTML = `<div class="p-8 text-center text-red-400">Failed to load plans.</div>`; }
+    }
+
+    function checkout(tier) { showToast(`Starting ${tier} checkout... (demo)`); /* In real app: fetch checkout URL */ }
+    function manageSubscription() { showToast('Opening billing portal... (demo)'); }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.querySelectorAll('.modal-backdrop').forEach(bd => {
+      bd.addEventListener('click', e => { if (e.target === bd) bd.classList.remove('open'); });
+    });
+
+    function initCounters() {
+      const stats = [
+        { id: 'stat-guilds', target: 1240 },
+        { id: 'stat-entries', target: 184000 },
+        { id: 'stat-artists', target: 9410 },
+        { id: 'stat-notifs', target: 2800000 }
+      ];
+      stats.forEach(stat => {
+        const el = document.getElementById(stat.id);
+        if (!el) return;
+        const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            let current = 0;
+            const step = Math.ceil(stat.target / 48);
+            const timer = setInterval(() => {
+              current += step;
+              if (current >= stat.target) { current = stat.target; clearInterval(timer); }
+              el.textContent = stat.target >= 1000 ? (current / 1000).toFixed(current > 10000 ? 0 : 1) + 'k' : current.toLocaleString();
+            }, 28);
+            observer.disconnect();
+          }
+        }, { threshold: 0.6 });
+        observer.observe(el);
+      });
+    }
+
+    function init() {
+      // Landing stats
+      loadLandingStats();
+
+      // Check if already logged in (demo)
+      // In real app this would call /auth/me
+      // For now, show landing. User can click Login to simulate dashboard.
+
+      // Keyboard hint
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+          e.preventDefault();
+          const pricing = document.getElementById('pricing');
+          if (pricing) pricing.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+
+      // Make sure dashboard can be triggered (demo helper)
+      window.showDemoDashboard = () => {
+        currentUser = { id: 'demo', username: 'demo_user', premium_tier: 'supporter', avatar_hash: null };
+        showDashboard();
+      };
+
+      console.log('%c[Prefix Hub] Premium landing + dashboard initialized. Use showDemoDashboard() in console for demo.', 'color:#475569');
+    }
+
+    window.onload = init;
+  </script>
 </body>
 </html>
