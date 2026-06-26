@@ -2,18 +2,11 @@
 shared/db/models.py
 Complete SQLAlchemy 2.x ORM models for Prefix Hub.
 All tables use BigInteger for Discord IDs (they exceed 32-bit int range).
-
-Tier model:
-  FREE       - Limited artists, home server only, basic notifications
-  SUPPORTER  - $3-5/mo: special role, early access, higher limits
-  PREMIUM    - $8-15/mo: personal bot invites, custom monitoring, priority feeds
 """
 from __future__ import annotations
-
 import enum
 from datetime import datetime
 from typing import Optional
-
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -22,7 +15,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    Text,
     UniqueConstraint,
     func,
 )
@@ -37,11 +29,10 @@ class Base(DeclarativeBase):
 # ─────────────────────────────────────────────
 # Enums
 # ─────────────────────────────────────────────
-
 class PremiumTier(str, enum.Enum):
     FREE = "free"
-    SUPPORTER = "supporter"   # was STANDARD
-    PREMIUM = "premium"       # was PRO
+    SUPPORTER = "supporter"
+    PREMIUM = "premium"
 
 
 class SubscriptionStatus(str, enum.Enum):
@@ -51,10 +42,14 @@ class SubscriptionStatus(str, enum.Enum):
     TRIALING = "trialing"
 
 
+def _get_enum_values(enum_cls):
+    """Return .value for each member (fixes SQLAlchemy enum binding)."""
+    return [member.value for member in enum_cls]
+
+
 # ─────────────────────────────────────────────
 # Users
 # ─────────────────────────────────────────────
-
 class User(Base):
     __tablename__ = "users"
 
@@ -63,13 +58,17 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(100), nullable=False)
     discriminator: Mapped[Optional[str]] = mapped_column(String(4), nullable=True)
     avatar_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+
     premium_tier: Mapped[PremiumTier] = mapped_column(
-        Enum(PremiumTier), nullable=False, default=PremiumTier.FREE
+        Enum(PremiumTier, values_callable=_get_enum_values),
+        nullable=False,
+        default=PremiumTier.FREE,
     )
     premium_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     is_bot_owner: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     is_banned: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     ban_reason: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
@@ -77,12 +76,14 @@ class User(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
-    subscriptions: Mapped[list[Subscription]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    artist_subscriptions: Mapped[list[UserArtistSubscription]] = relationship(
+    subscriptions: Mapped[list["Subscription"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    api_keys: Mapped[list[ApiKey]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    notification_logs: Mapped[list[NotificationLog]] = relationship(back_populates="user")
+    artist_subscriptions: Mapped[list["UserArtistSubscription"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    api_keys: Mapped[list["ApiKey"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    notification_logs: Mapped[list["NotificationLog"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:
         return f"<User discord_id={self.discord_id} username={self.username!r}>"
@@ -91,7 +92,6 @@ class User(Base):
 # ─────────────────────────────────────────────
 # Guilds
 # ─────────────────────────────────────────────
-
 class Guild(Base):
     __tablename__ = "guilds"
 
@@ -100,11 +100,13 @@ class Guild(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     icon_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     owner_discord_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+
     premium_tier: Mapped[PremiumTier] = mapped_column(
-        Enum(PremiumTier), nullable=False, default=PremiumTier.FREE
+        Enum(PremiumTier, values_callable=_get_enum_values),
+        nullable=False,
+        default=PremiumTier.FREE,
     )
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-
     leaks_channel_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     audit_channel_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     artists_channel_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
@@ -117,16 +119,16 @@ class Guild(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
-    settings: Mapped[Optional[GuildSettings]] = relationship(
+    settings: Mapped[Optional["GuildSettings"]] = relationship(
         back_populates="guild", uselist=False, cascade="all, delete-orphan"
     )
-    guild_artists: Mapped[list[GuildArtist]] = relationship(
+    guild_artists: Mapped[list["GuildArtist"]] = relationship(
         back_populates="guild", cascade="all, delete-orphan"
     )
-    guild_feed_entries: Mapped[list[GuildFeedEntry]] = relationship(
+    guild_feed_entries: Mapped[list["GuildFeedEntry"]] = relationship(
         back_populates="guild", cascade="all, delete-orphan"
     )
-    notification_logs: Mapped[list[NotificationLog]] = relationship(back_populates="guild")
+    notification_logs: Mapped[list["NotificationLog"]] = relationship(back_populates="guild")
 
     def __repr__(self) -> str:
         return f"<Guild discord_id={self.discord_id} name={self.name!r}>"
@@ -147,6 +149,7 @@ class GuildSettings(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
+
     guild: Mapped[Guild] = relationship(back_populates="settings")
 
     def __repr__(self) -> str:
@@ -156,7 +159,6 @@ class GuildSettings(Base):
 # ─────────────────────────────────────────────
 # Artists
 # ─────────────────────────────────────────────
-
 class Artist(Base):
     __tablename__ = "artists"
 
@@ -166,7 +168,8 @@ class Artist(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
-    guild_artists: Mapped[list[GuildArtist]] = relationship(back_populates="artist")
+
+    guild_artists: Mapped[list["GuildArtist"]] = relationship(back_populates="artist")
 
     def __repr__(self) -> str:
         return f"<Artist name={self.name_normalized!r}>"
@@ -192,7 +195,7 @@ class GuildArtist(Base):
 
     guild: Mapped[Guild] = relationship(back_populates="guild_artists")
     artist: Mapped[Artist] = relationship(back_populates="guild_artists")
-    user_subscriptions: Mapped[list[UserArtistSubscription]] = relationship(
+    user_subscriptions: Mapped[list["UserArtistSubscription"]] = relationship(
         back_populates="guild_artist", cascade="all, delete-orphan"
     )
 
@@ -214,6 +217,7 @@ class UserArtistSubscription(Base):
     subscribed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
     user: Mapped[User] = relationship(back_populates="artist_subscriptions")
     guild_artist: Mapped[GuildArtist] = relationship(back_populates="user_subscriptions")
 
@@ -224,7 +228,6 @@ class UserArtistSubscription(Base):
 # ─────────────────────────────────────────────
 # Feeds & Entries
 # ─────────────────────────────────────────────
-
 class Feed(Base):
     __tablename__ = "feeds"
 
@@ -240,7 +243,8 @@ class Feed(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
-    entries: Mapped[list[FeedEntry]] = relationship(back_populates="feed", cascade="all, delete-orphan")
+
+    entries: Mapped[list["FeedEntry"]] = relationship(back_populates="feed", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f"<Feed name={self.name!r}>"
@@ -268,10 +272,10 @@ class FeedEntry(Base):
     deleted_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     feed: Mapped[Feed] = relationship(back_populates="entries")
-    guild_entries: Mapped[list[GuildFeedEntry]] = relationship(
+    guild_entries: Mapped[list["GuildFeedEntry"]] = relationship(
         back_populates="feed_entry", cascade="all, delete-orphan"
     )
-    notification_logs: Mapped[list[NotificationLog]] = relationship(back_populates="feed_entry")
+    notification_logs: Mapped[list["NotificationLog"]] = relationship(back_populates="feed_entry")
 
     def __repr__(self) -> str:
         return f"<FeedEntry title={self.title!r}>"
@@ -306,7 +310,6 @@ class GuildFeedEntry(Base):
 # ─────────────────────────────────────────────
 # Notifications
 # ─────────────────────────────────────────────
-
 class NotificationLog(Base):
     __tablename__ = "notification_logs"
 
@@ -337,7 +340,6 @@ class NotificationLog(Base):
 # ─────────────────────────────────────────────
 # Premium / Subscriptions
 # ─────────────────────────────────────────────
-
 class Subscription(Base):
     __tablename__ = "subscriptions"
 
@@ -345,7 +347,7 @@ class Subscription(Base):
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    tier: Mapped[PremiumTier] = mapped_column(Enum(PremiumTier), nullable=False)
+    tier: Mapped[PremiumTier] = mapped_column(Enum(PremiumTier, values_callable=_get_enum_values), nullable=False)
     status: Mapped[SubscriptionStatus] = mapped_column(Enum(SubscriptionStatus), nullable=False)
     stripe_customer_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     stripe_subscription_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True, unique=True)
@@ -358,6 +360,7 @@ class Subscription(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
     )
+
     user: Mapped[User] = relationship(back_populates="subscriptions")
 
     def __repr__(self) -> str:
@@ -367,7 +370,6 @@ class Subscription(Base):
 # ─────────────────────────────────────────────
 # API Keys
 # ─────────────────────────────────────────────
-
 class ApiKey(Base):
     __tablename__ = "api_keys"
 
@@ -383,6 +385,7 @@ class ApiKey(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
+
     user: Mapped[User] = relationship(back_populates="api_keys")
 
     def __repr__(self) -> str:
