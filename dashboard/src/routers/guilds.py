@@ -2,8 +2,6 @@
 dashboard/src/routers/guilds.py
 Guild management API endpoints.
 """
-import aiohttp
-
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -14,6 +12,8 @@ from dashboard.src.auth.session import get_current_user
 from shared.db.models import User
 from shared.db.repositories.guild_repo import GuildRepository
 from shared.db.session import get_db_session
+
+import aiohttp
 
 from shared.config import get_settings
 settings = get_settings()
