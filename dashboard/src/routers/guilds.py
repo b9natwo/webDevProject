@@ -2,6 +2,8 @@
 dashboard/src/routers/guilds.py
 Guild management API endpoints.
 """
+import aiohttp
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -12,6 +14,9 @@ from dashboard.src.auth.session import get_current_user
 from shared.db.models import User
 from shared.db.repositories.guild_repo import GuildRepository
 from shared.db.session import get_db_session
+
+from shared.config import get_settings
+settings = get_settings()
 
 router = APIRouter(tags=["guilds"])
 
@@ -74,6 +79,19 @@ async def get_guild(
         } if guild.settings else {},
     }
 
+@router.get("/{guild_id}/roles")
+async def get_guild_roles(
+    guild_id: int,
+    user: User = Depends(get_current_user),
+) -> list:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"https://discord.com/api/v10/guilds/{guild_id}/roles",
+            headers={"Authorization": f"Bot {settings.discord_token.get_secret_value()}"}
+        ) as resp:
+            if resp.status != 200:
+                raise HTTPException(status_code=resp.status, detail="Could not fetch roles from Discord")
+            return await resp.json()
 
 @router.patch("/{guild_discord_id}/channels")
 async def update_guild_channels(
