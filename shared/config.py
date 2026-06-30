@@ -91,6 +91,10 @@ class Settings(BaseSettings):
     stripe_supporter_price_id: str = Field("", description="Stripe Price ID for Supporter tier")
     stripe_premium_price_id: str = Field("", description="Stripe Price ID for Premium tier")
 
+    stripe_supporter_price_id: str | None = None
+    stripe_premium_price_id: str | None = None
+    stripe_enabled: bool = False
+
     # ── Environment ────────────────────────────────────────────────────
     environment: str = Field("development", pattern="^(development|production|testing)$")
     log_level: str = Field("INFO", pattern="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$")
