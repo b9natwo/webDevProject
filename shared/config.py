@@ -91,9 +91,10 @@ class Settings(BaseSettings):
     stripe_supporter_price_id: str = Field("", description="Stripe Price ID for Supporter tier")
     stripe_premium_price_id: str = Field("", description="Stripe Price ID for Premium tier")
 
+    stripe_secret_key: SecretStr | None = None
+    stripe_webhook_secret: SecretStr | None = None
     stripe_supporter_price_id: str | None = None
     stripe_premium_price_id: str | None = None
-    stripe_enabled: bool = False
 
     # ── Environment ────────────────────────────────────────────────────
     environment: str = Field("development", pattern="^(development|production|testing)$")
@@ -119,9 +120,11 @@ class Settings(BaseSettings):
     def is_testing(self) -> bool:
         return self.environment == "testing"
 
+    @computed_field
     @property
     def stripe_enabled(self) -> bool:
-        return bool(self.stripe_secret_key.get_secret_value())
+        """Payments are enabled only if we have a secret key."""
+        return bool(self.stripe_secret_key and self.stripe_secret_key.get_secret_value().strip())
 
 
 @lru_cache(maxsize=1)
