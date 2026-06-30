@@ -120,7 +120,6 @@ class Settings(BaseSettings):
     def is_testing(self) -> bool:
         return self.environment == "testing"
 
-    @computed_field
     @property
     def stripe_enabled(self) -> bool:
         """Payments are enabled only if we have a secret key."""
