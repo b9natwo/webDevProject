@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -824,6 +822,7 @@
     <div class="footer-links">
       <!--<a href="/api/docs">API Docs</a>-->
       <a onclick="redirectToDiscord()" style="cursor:pointer;" target="_blank">Discord</a>
+      <a href="https://github.com/prefixhub" target="_blank">GitHub</a>
     </div>
     <p>© 2026 Prefix Hub</p>
   </footer>
@@ -1006,7 +1005,7 @@
         <div class="dash-header">
           <div>
             <div class="dash-header-title">Settings</div>
-            <div class="dash-header-sub">Notification and server preferences</div>
+            <div class="dash-header-sub" id="settings-guild-label">Select a server to configure its settings</div>
           </div>
         </div>
         <div id="settings-guild-warn" class="alert alert-warning" style="margin-bottom:1rem;display:none">
@@ -1021,29 +1020,54 @@
         <div id="stab-notifications" class="tab-panel active">
           <div class="card">
             <div class="card-header"><div class="card-title">Notification Settings</div></div>
+
             <div class="notif-row">
               <div>
                 <div class="notif-label">New leaks</div>
-                <div class="notif-desc">Get notified when a new thread appears for a tracked artist</div>
+                <div class="notif-desc">Posts a message in your leaks channel the moment a tracked artist gets a new thread. Turning this off pauses all new-leak alerts for this server — existing tracked artists stay saved, you just won't be pinged.</div>
               </div>
               <label class="toggle"><input type="checkbox" checked id="notif-new"><span class="toggle-track"></span></label>
             </div>
+
             <div class="notif-row">
               <div>
                 <div class="notif-label">Thread deletions</div>
-                <div class="notif-desc">Alert when a tracked thread disappears from leaked.cx</div>
+                <div class="notif-desc">When a thread we already notified you about gets taken down on the source site, send a follow-up alert in the same channel marking it as deleted. Off by default since most servers only care about new drops.</div>
               </div>
               <label class="toggle"><input type="checkbox" id="notif-delete"><span class="toggle-track"></span></label>
             </div>
-            <div class="notif-row">
-              <div>
-                <div class="notif-label">Notification format</div>
-                <div class="notif-desc">Rich embeds or plain text messages</div>
+
+            <div class="notif-row" style="flex-direction:column;align-items:stretch;gap:0.75rem">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div>
+                  <div class="notif-label">Notification format</div>
+                  <div class="notif-desc">Controls how each leak alert is displayed in Discord. Embeds are richer but use more vertical space; plain text is compact and easy to scan in busy channels.</div>
+                </div>
+                <select class="form-input" style="width:150px;flex-shrink:0" id="notif-format" onchange="updateFormatPreview()">
+                  <option value="embed">Rich Embed</option>
+                  <option value="text">Plain Text</option>
+                </select>
               </div>
-              <select class="form-input" style="width:130px" id="notif-format">
-                <option value="embed">Rich Embed</option>
-                <option value="text">Plain Text</option>
-              </select>
+
+              <!-- Live preview so users can see exactly what each format looks like -->
+              <div id="format-preview-embed" style="border-left:3px solid var(--accent);background:var(--surface2);border-radius:8px;padding:0.85rem 1rem;display:flex;gap:0.75rem">
+                <div style="width:48px;height:48px;border-radius:6px;background:var(--surface3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🎵</div>
+                <div style="min-width:0">
+                  <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.15rem">Prefix Hub Bot</div>
+                  <div style="font-weight:600;font-size:0.85rem;color:#818cf8">[LEAK] Travis Scott - New Song (CDQ)</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.3rem">Links: <a href="#" onclick="return false">Pixeldrain</a> · <a href="#" onclick="return false">Discord</a></div>
+                  <div style="font-size:0.68rem;color:var(--text-dim);margin-top:0.4rem;border-top:1px solid var(--border);padding-top:0.3rem">leaked.cx • Today at 4:12 PM</div>
+                </div>
+              </div>
+              <div id="format-preview-text" style="border-left:3px solid var(--text-dim);background:var(--surface2);border-radius:8px;padding:0.85rem 1rem;display:none">
+                <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:0.3rem">Prefix Hub Bot</div>
+                <div style="font-size:0.85rem;color:var(--text)">🎵 <strong>Travis Scott - New Song (CDQ)</strong><br><a href="#" onclick="return false">https://leaked.cx/threads/travis-scott-new-song</a></div>
+              </div>
+            </div>
+
+            <div class="notif-row">
+              <div></div>
+              <button class="btn btn-sm" id="btn-save-notif" onclick="saveNotificationSettings()">Save Settings</button>
             </div>
           </div>
         </div>
@@ -1069,14 +1093,14 @@
               <div class="form-group">
                 <label class="form-label">Blacklisted artists</label>
                 <input class="form-input" id="filter-blacklist" type="text" placeholder="artist1, artist2, …">
-                <div class="form-hint">Comma-separated. Leaks for these artists will be silently dropped.</div>
+                <div class="form-hint">Comma-separated artist names. Any leak matching these names is silently skipped — no notification, no log entry. Use this to mute artists your community isn't interested in without removing them from anyone else's tracking.</div>
               </div>
               <div class="form-group">
                 <label class="form-label">Minimum thread age (minutes)</label>
                 <input class="form-input" id="filter-min-age" type="number" min="0" value="0">
-                <div class="form-hint">Ignore threads younger than this. Useful to reduce false positives.</div>
+                <div class="form-hint">Threads younger than this are ignored on the first pass and re-checked next cycle. Set this above 0 if you're getting notified about threads that get deleted within seconds (common with low-quality reposts). 0 means no delay.</div>
               </div>
-              <button class="btn btn-sm" style="margin-top:0.25rem">Save Filters</button>
+              <button class="btn btn-sm" style="margin-top:0.25rem" onclick="saveFilterSettings()">Save Filters</button>
             </div>
           </div>
         </div>
@@ -1111,11 +1135,9 @@
         onkeydown="if(event.key==='Enter')submitAddArtist()" />
     </div>
     <div class="form-group">
-      <label class="form-label">Discord Role <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
-      <select class="form-input" id="input-artist-role">
-        <option value="">No role — just track silently</option>
-      </select>
-      <div class="form-hint">This role will be @mentioned when a new leak is detected for this artist.</div>
+      <label class="form-label">Discord Role ID <span style="color:var(--text-dim);font-weight:400">(optional)</span></label>
+      <input class="form-input" id="input-artist-role" type="number" placeholder="Leave blank to skip" />
+      <div class="form-hint">If set, this role will be mentioned when a new leak is detected.</div>
     </div>
     <div id="add-artist-error" style="display:none;margin-bottom:0"></div>
     <div class="modal-actions">
@@ -1220,41 +1242,11 @@ async function init() {
     const res = await fetch('/auth/me', { credentials: 'include' });
     if (res.ok) {
       currentUser = await res.json();
-      const tier = currentUser.premium_tier || 'free';
-      if (tier === 'free') {
-        // Free users go straight to the community Discord
-        showFreeGate();
-      } else {
-        showDashboard();
-      }
+      showDashboard();
     } else {
       showLanding();
     }
   } catch { showLanding(); }
-}
-
-function showFreeGate() {
-  // Hide landing and dashboard, show the free-gate overlay
-  document.getElementById('page-landing').classList.remove('active');
-  document.getElementById('page-dashboard').classList.remove('active');
-  document.getElementById('topbar-landing-nav').style.display = 'none';
-  document.getElementById('topbar-logged-out').style.display = 'none';
-  const li = document.getElementById('topbar-logged-in');
-  li.style.display = 'flex';
-
-  const tier = currentUser.premium_tier || 'free';
-  document.getElementById('topbar-username').textContent = currentUser.username;
-  const tierEl = document.getElementById('topbar-tier');
-  tierEl.textContent = 'Free';
-  tierEl.className = 'tier-pill tier-free';
-  const av = document.getElementById('topbar-avatar');
-  if (currentUser.avatar_hash) {
-    av.innerHTML = `<img src="https://cdn.discordapp.com/avatars/${currentUser.id}/${currentUser.avatar_hash}.webp?size=64" alt="" />`;
-  } else {
-    av.textContent = currentUser.username.charAt(0).toUpperCase();
-  }
-
-  document.getElementById('page-free-gate').classList.add('active');
 }
 
 function showLanding() {
@@ -1288,8 +1280,8 @@ function showDashboard() {
     av.textContent = currentUser.username.charAt(0).toUpperCase();
   }
 
-  // Show upgrade nudge for supporter users
-  if (tier === 'supporter') {
+  // Show upgrade nudge for free users
+  if (tier === 'free') {
     document.getElementById('sidebar-upgrade-nudge').style.display = 'block';
   }
 
@@ -1490,7 +1482,7 @@ function serverCard(g) {
   const iconHtml = g.id && g.icon_hash
     ? `<img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon_hash}.webp?size=64" alt="" />`
     : initials;
-  const tierBadge = `<span class="badge badge-${g.premium_tier}">${g.premium_tier.toUpperCase()}</span>`;
+  const tierBadge = `<span class="badge badge-${g.premium_tier}">${g.premium_tier}</span>`;
   const isSelected = selectedGuild?.id === g.id;
   const configMeta = g.is_configured
     ? '<span style="color:var(--green);font-size:0.75rem">✓ Configured</span>'
@@ -1612,51 +1604,18 @@ function renderArtists(artists) {
     </div>`;
 }
 
-async function openAddArtist() {
+function openAddArtist() {
   document.getElementById('input-artist-name').value = '';
+  document.getElementById('input-artist-role').value = '';
   const err = document.getElementById('add-artist-error');
   err.style.display = 'none'; err.textContent = '';
-
-  // Populate role dropdown from guild
-  const roleSelect = document.getElementById('input-artist-role');
-  roleSelect.innerHTML = '<option value="">Loading roles…</option>';
-  roleSelect.disabled = true;
-
-  if (selectedGuild) {
-    try {
-      const res = await fetch(`/api/guilds/${selectedGuild.id}/roles`, { credentials: 'include' });
-      if (res.ok) {
-        const roles = await res.json();
-        roleSelect.innerHTML = '<option value="">No role — just track silently</option>';
-        roles
-          .filter(r => r.name !== '@everyone')
-          .sort((a, b) => b.position - a.position)
-          .forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r.id;
-            const color = r.color ? `#${r.color.toString(16).padStart(6,'0')}` : null;
-            opt.textContent = (color ? `● ` : '') + r.name;
-            if (color) opt.style.color = color;
-            roleSelect.appendChild(opt);
-          });
-      } else {
-        roleSelect.innerHTML = '<option value="">Could not load roles — enter ID manually</option>';
-      }
-    } catch {
-      roleSelect.innerHTML = '<option value="">Could not load roles</option>';
-    }
-  } else {
-    roleSelect.innerHTML = '<option value="">Select a server first</option>';
-  }
-  roleSelect.disabled = false;
-
   openModal('modal-add-artist');
   setTimeout(() => document.getElementById('input-artist-name').focus(), 50);
 }
 
 async function submitAddArtist() {
   const name = document.getElementById('input-artist-name').value.trim();
-  const roleRaw = document.getElementById('input-artist-role').value;
+  const roleRaw = document.getElementById('input-artist-role').value.trim();
   const errEl = document.getElementById('add-artist-error');
   errEl.style.display = 'none';
 
@@ -1747,16 +1706,107 @@ async function loadFeeds() {
 }
 
 // ── Settings ─────────────────────────────────────────────────────────
-function loadSettings() {
+async function loadSettings() {
   if (!selectedGuild) {
     document.getElementById('settings-guild-warn').style.display = 'block';
-  } else {
-    document.getElementById('settings-guild-warn').style.display = 'none';
+    document.getElementById('settings-guild-label').textContent = 'Select a server to configure its settings';
+    return;
   }
+  document.getElementById('settings-guild-warn').style.display = 'none';
+  document.getElementById('settings-guild-label').textContent = `Configuring: ${selectedGuild.name}`;
+
   const tier = currentUser?.premium_tier || 'free';
   const isPremium = tier === 'premium';
   document.getElementById('filters-locked').style.display   = isPremium ? 'none' : 'block';
   document.getElementById('filters-content').style.display  = isPremium ? 'block' : 'none';
+
+  // Pull current saved settings from the server and populate the form
+  try {
+    const res = await fetch(`/api/guilds/${selectedGuild.id}/settings`, { credentials: 'include' });
+    if (res.ok) {
+      const s = await res.json();
+      document.getElementById('notif-new').checked = s.notify_new !== false;
+      document.getElementById('notif-delete').checked = !!s.notify_deletions;
+      document.getElementById('notif-format').value = s.notification_format || 'embed';
+      updateFormatPreview();
+      if (isPremium) {
+        document.getElementById('filter-blacklist').value = (s.blacklisted_artists || []).join(', ');
+        document.getElementById('filter-min-age').value = s.filter_min_age_minutes ?? 0;
+      }
+    }
+  } catch {
+    // Non-fatal — form just keeps its defaults
+  }
+}
+
+function updateFormatPreview() {
+  const fmt = document.getElementById('notif-format').value;
+  document.getElementById('format-preview-embed').style.display = fmt === 'embed' ? 'flex' : 'none';
+  document.getElementById('format-preview-text').style.display = fmt === 'text' ? 'block' : 'none';
+}
+
+async function saveNotificationSettings() {
+  if (!selectedGuild) { toast('Select a server first.', 'error'); return; }
+  const btn = document.getElementById('btn-save-notif');
+  const originalText = btn.textContent;
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  const body = {
+    notify_new: document.getElementById('notif-new').checked,
+    notify_deletions: document.getElementById('notif-delete').checked,
+    notification_format: document.getElementById('notif-format').value,
+  };
+
+  try {
+    const res = await fetch(`/api/guilds/${selectedGuild.id}/settings`, {
+      method: 'PATCH', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      toast('Notification settings saved!');
+    } else {
+      const d = await res.json().catch(() => ({}));
+      toast(d.detail || 'Failed to save settings.', 'error');
+    }
+  } catch {
+    toast('Network error — could not save.', 'error');
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+async function saveFilterSettings() {
+  if (!selectedGuild) { toast('Select a server first.', 'error'); return; }
+  const tier = currentUser?.premium_tier || 'free';
+  if (tier !== 'premium') { toast('Filters require Premium.', 'error'); return; }
+
+  const blacklistRaw = document.getElementById('filter-blacklist').value;
+  const blacklisted = blacklistRaw.split(',').map(s => s.trim()).filter(Boolean);
+  const minAge = parseInt(document.getElementById('filter-min-age').value) || 0;
+
+  const body = {
+    blacklisted_artists: blacklisted,
+    filter_min_age_minutes: minAge,
+  };
+
+  try {
+    const res = await fetch(`/api/guilds/${selectedGuild.id}/settings`, {
+      method: 'PATCH', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      toast('Filters saved!');
+    } else {
+      const d = await res.json().catch(() => ({}));
+      toast(d.detail || 'Failed to save filters.', 'error');
+    }
+  } catch {
+    toast('Network error — could not save.', 'error');
+  }
 }
 
 function switchSettingsTab(tab) {
@@ -1815,7 +1865,7 @@ async function loadUpgrade() {
       <div style="margin-top:1.5rem;padding:1rem;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">
         <p style="font-size:0.8rem;color:var(--text-muted)">
           Payments are processed securely via Stripe. Cancel anytime from your billing portal.
-          Questions? Join our <a href="https://discord.gg/jxTRa4HxnZ" target="_blank">Discord</a>.
+          Questions? Join our <a href="https://discord.gg/prefixhub" target="_blank">Discord</a>.
         </p>
       </div>`;
   } catch {
@@ -1871,94 +1921,5 @@ window.addEventListener('load', initLucide);
 // ── Boot ─────────────────────────────────────────────────────────────
 init();
 </script>
-
-<!-- ═══════════════════════════════════════════════════════════════════
-     FREE GATE PAGE
-════════════════════════════════════════════════════════════════════ -->
-<div id="page-free-gate" class="page" style="min-height:calc(100vh - 56px);display:none;align-items:center;justify-content:center;flex-direction:column;">
-</div>
-
-<style>
-#page-free-gate.active { display:flex !important; }
-.free-gate-card {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-lg);
-  padding: 2.5rem;
-  max-width: 480px;
-  width: 100%;
-  text-align: center;
-  box-shadow: var(--shadow);
-  margin: 2rem 1rem;
-}
-.free-gate-icon {
-  width: 64px; height: 64px; border-radius: 18px;
-  background: var(--accent-dim); border: 1px solid rgba(88,101,242,0.3);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.75rem; margin: 0 auto 1.5rem;
-}
-.free-gate-title { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.6rem; }
-.free-gate-sub { color: var(--text-muted); font-size: 0.9rem; line-height: 1.65; margin-bottom: 2rem; }
-.free-gate-actions { display: flex; flex-direction: column; gap: 0.75rem; }
-.free-gate-divider {
-  display: flex; align-items: center; gap: 0.75rem;
-  color: var(--text-dim); font-size: 0.78rem; margin: 0.25rem 0;
-}
-.free-gate-divider::before, .free-gate-divider::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
-.free-gate-perks {
-  text-align: left; list-style: none;
-  display: flex; flex-direction: column; gap: 0.5rem;
-  margin-bottom: 1.75rem;
-  background: var(--surface2); border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-}
-.free-gate-perks li {
-  display: flex; align-items: center; gap: 0.5rem;
-  font-size: 0.85rem; color: var(--text-muted);
-}
-.free-gate-perks li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
-</style>
-
-<script>
-
-(function() {
-  const gate = document.getElementById('page-free-gate');
-  gate.innerHTML = `
-    <div class="free-gate-card">
-      <div class="free-gate-icon"><img src="/assets/favicon.png"></img></div>
-      <div class="free-gate-title">Welcome to Prefix Hub</div>
-      <p class="free-gate-sub">
-        The dashboard is available to <strong>Supporter</strong> and <strong>Premium</strong> members.
-        Free members can access all leaks and notifications through our Discord community.
-      </p>
-      <ul class="free-gate-perks">
-        <li>Real-time leak notifications in Discord</li>
-        <li>Access to all threads</li>
-        <li>Community discussions and requests</li>
-        <li>Basic artist tracking via slash commands</li>
-      </ul>
-      <div class="free-gate-actions">
-        <button class="btn btn-discord btn-lg" style="justify-content:center" onclick="redirectToDiscord()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.079.114 18.1.132 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
-          Join Our Discord
-        </button>
-        <div class="free-gate-divider">or upgrade for full dashboard access</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem">
-          <button class="btn" onclick="checkout('supporter')">
-            Support Prefix Hub <span style="opacity:0.7;font-size:0.8rem">$4/mo</span>
-          </button>
-          <button class="btn btn-gold" onclick="checkout('premium')">
-            Go Premium <span style="opacity:0.7;font-size:0.8rem">$12/mo</span>
-          </button>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="logout()" style="margin-top:0.25rem">Sign out</button>
-      </div>
-    </div>
-  `;
-})();
-</script>
-
 </body>
 </html>
