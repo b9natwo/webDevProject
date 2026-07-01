@@ -231,7 +231,9 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-lg); padding: 1.75rem;
       position: relative; transition: border-color var(--transition);
+      display: flex; flex-direction: column;
     }
+    .plan-card .plan-features { flex: 1; }
     .plan-card:hover { border-color: var(--border2); }
     .plan-card.featured {
       border-color: rgba(88,101,242,0.5);
@@ -517,7 +519,9 @@
     .upgrade-card {
       background: var(--surface2); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 1.5rem; position: relative;
+      display: flex; flex-direction: column;
     }
+    .upgrade-card .upgrade-feats { flex: 1; }
     .upgrade-card.active-plan { border-color: var(--accent); }
     .upgrade-active-badge {
       position: absolute; top: 0.75rem; right: 0.75rem;
@@ -611,7 +615,7 @@
      TOPBAR
 ════════════════════════════════════════════════════════════════════ -->
 <nav id="topbar">
-  <span class="topbar-brand">Prefix<span>Hub</span></span>
+  <a style="text-decoration: none; cursor: pointer;" href="https://prefixhub.lol"><span class="topbar-brand">Prefix<span>Hub</span></span></a>
 
   <!-- landing nav links (shown logged out) -->
   <div class="topbar-nav" id="topbar-landing-nav">
@@ -686,7 +690,7 @@
 
   <!-- Features -->
   <section class="section" id="features">
-    <div class="section-label">How it works</div>
+    <div class="section-label">What it is</div>
     <h2 class="section-title">Everything your server needs</h2>
     <p class="section-sub">A clean dashboard that brings your monitoring, notifications, and insights together in one place.</p>
     
@@ -764,14 +768,14 @@
 
       <!-- Supporter -->
       <div class="plan-card featured">
-        <div class="plan-badge plan-badge-popular">Most Popular</div>
+        <div class="plan-badge plan-badge-popular">Recommended</div>
         <div class="plan-name">Supporter</div>
         <div class="plan-price"><sup>$</sup>4<span style="font-size:1rem">/mo</span></div>
         <div class="plan-period">billed monthly · cancel anytime</div>
         <hr class="plan-divider" />
         <ul class="plan-features">
           <li>Track up to 25 artists</li>
-          <li>Exclusive '🐐' role</li>
+          <li>Exclusive V.I.P access in Discord</li>
           <li>Access live feed & community statistics</li>
         </ul>
         <button class="btn" style="width:100%" onclick="login()">Subscribe as Supporter</button>
@@ -786,7 +790,7 @@
         <hr class="plan-divider" />
         <ul class="plan-features">
           <li>Unlimited artists</li>
-          <li>Invite to your own server</li>
+          <li>Invite and manage up to 3 of your servers</li>
           <li>Priority polling (15s)</li>
           <li>Access personal dashboard</li>
         </ul>
@@ -1044,7 +1048,7 @@
               </div>
               <span class="badge badge-premium">Premium only</span>
             </div>
-            <div id="filters-locked" style="display:none">
+            <div id="filters-locked" style="display:block">
               <div class="empty" style="padding:2rem">
                 <div class="empty-icon">🔒</div>
                 <h3>Premium required</h3>
@@ -1735,11 +1739,8 @@ async function loadFeeds() {
 
 // ── Settings ─────────────────────────────────────────────────────────
 async function loadSettings() {
-  if (!selectedGuild) {
-    document.getElementById('settings-guild-warn').style.display = 'block';
-    return;
-  }
-  document.getElementById('settings-guild-warn').style.display = 'none';
+  // Show/hide guild warning — but always continue to run the tier check
+  document.getElementById('settings-guild-warn').style.display = selectedGuild ? 'none' : 'block';
 
   // Re-fetch currentUser so a recently upgraded account sees filters immediately
   try {
@@ -1749,8 +1750,30 @@ async function loadSettings() {
 
   const tier = String(currentUser?.premium_tier || 'free').toLowerCase().trim();
   const isPremium = tier === 'premium';
-  document.getElementById('filters-locked').style.display   = isPremium ? 'none' : 'block';
-  document.getElementById('filters-content').style.display  = isPremium ? 'block' : 'none';
+  document.getElementById('filters-locked').style.display  = isPremium ? 'none' : 'block';
+  document.getElementById('filters-content').style.display = isPremium ? 'block' : 'none';
+
+  // If we have a guild, load its saved settings into the form
+  if (selectedGuild) {
+    try {
+      const res = await fetch(`/api/guilds/${selectedGuild.id}/settings`, { credentials: 'include' });
+      if (res.ok) {
+        const s = await res.json();
+        const newEl  = document.getElementById('notif-new');
+        const delEl  = document.getElementById('notif-delete');
+        const fmtEl  = document.getElementById('notif-format');
+        if (newEl)  newEl.checked  = s.notify_new !== false;
+        if (delEl)  delEl.checked  = !!s.notify_deletions;
+        if (fmtEl)  fmtEl.value    = s.notification_format || 'embed';
+        if (isPremium) {
+          const bl = document.getElementById('filter-blacklist');
+          const ma = document.getElementById('filter-min-age');
+          if (bl) bl.value = (s.blacklisted_artists || []).join(', ');
+          if (ma) ma.value = s.filter_min_age_minutes ?? 0;
+        }
+      }
+    } catch {}
+  }
 }
 
 function switchSettingsTab(tab) {
