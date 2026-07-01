@@ -1026,15 +1026,39 @@
               </div>
               <label class="toggle"><input type="checkbox" id="notif-delete"><span class="toggle-track"></span></label>
             </div>
-            <div class="notif-row">
-              <div>
-                <div class="notif-label">Notification format</div>
-                <div class="notif-desc">Rich embeds or plain text messages</div>
+            <div class="notif-row" style="flex-direction:column;align-items:stretch;gap:0.75rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem">
+                <div>
+                  <div class="notif-label">Notification format</div>
+                  <div class="notif-desc">Controls how each drop alert appears in Discord. Switch between the two to see a live preview below.</div>
+                </div>
+                <select class="form-input" style="width:150px;flex-shrink:0" id="notif-format" onchange="updateFormatPreview()">
+                  <option value="embed">Rich Embed</option>
+                  <option value="text">Plain Text</option>
+                </select>
               </div>
-              <select class="form-input" style="width:130px" id="notif-format">
-                <option value="embed">Rich Embed</option>
-                <option value="text">Plain Text</option>
-              </select>
+
+              <!-- Embed preview -->
+              <div id="format-preview-embed" style="border-left:3px solid var(--accent);background:var(--surface2);border-radius:8px;padding:0.85rem 1rem;display:flex;gap:0.75rem;align-items:flex-start">
+                <div style="width:44px;height:44px;border-radius:8px;background:var(--surface3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🎵</div>
+                <div style="min-width:0">
+                  <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.2rem;font-weight:600">Prefix Hub <span style="font-weight:400;color:var(--text-dim)">Today at 4:12 PM</span></div>
+                  <div style="font-weight:700;font-size:0.85rem;color:#818cf8;margin-bottom:0.25rem">Travis Scott — New Song (CDQ)</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem">Matched artist: <strong style="color:var(--text)">Travis Scott</strong> · Tags: <span style="color:var(--text-dim)">CDQ, 2025</span></div>
+                  <div style="font-size:0.78rem;color:var(--text-muted)">Links: <a href="#" onclick="return false" style="color:var(--accent)">Pixeldrain</a> · <a href="#" onclick="return false" style="color:var(--accent)">Download</a></div>
+                  <div style="font-size:0.68rem;color:var(--text-dim);border-top:1px solid var(--border);padding-top:0.3rem;margin-top:0.4rem">leaked.cx</div>
+                </div>
+              </div>
+
+              <!-- Plain text preview -->
+              <div id="format-preview-text" style="border-left:3px solid var(--text-dim);background:var(--surface2);border-radius:8px;padding:0.85rem 1rem;display:none">
+                <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.3rem;font-weight:600">Prefix Hub <span style="font-weight:400">Today at 4:12 PM</span></div>
+                <div style="font-size:0.85rem;color:var(--text);line-height:1.6">🎵 <strong>Travis Scott — New Song (CDQ)</strong><br><span style="color:var(--accent);font-size:0.8rem">https://leaked.cx/threads/travis-scott-new-song-cdq</span></div>
+              </div>
+            </div>
+
+            <div class="notif-row" style="justify-content:flex-end;padding-top:0.25rem">
+              <button class="btn btn-sm" id="btn-save-notif" onclick="saveNotificationSettings()">Save Settings</button>
             </div>
           </div>
         </div>
@@ -1776,6 +1800,12 @@ async function loadSettings() {
   }
 }
 
+function updateFormatPreview() {
+  const fmt = document.getElementById('notif-format').value;
+  document.getElementById('format-preview-embed').style.display = fmt === 'embed' ? 'flex' : 'none';
+  document.getElementById('format-preview-text').style.display  = fmt === 'text'  ? 'block' : 'none';
+}
+
 function switchSettingsTab(tab) {
   document.querySelectorAll('.tab-btn[data-stab]').forEach(b => b.classList.toggle('active', b.dataset.stab === tab));
   document.querySelectorAll('#stab-notifications, #stab-filters').forEach(p => p.style.display = 'none');
@@ -1798,12 +1828,12 @@ async function loadUpgrade() {
       },
       {
         id: 'supporter', name: 'Supporter', price: '$4', period: '/mo',
-        features: ['Track up to 25 artists','Supporter role in Discord','Access to dashboard','Support the project'],
+        features: ['Track up to 25 artists','Exclusive V.I.P access in Discord','Access live feed & community statistics'],
         cta: 'supporter', ctaLabel: 'Subscribe as Supporter', ctaClass: 'btn',
       },
       {
         id: 'premium', name: 'Premium', price: '$12', period: '/mo',
-        features: ['Unlimited artist tracking','Invite bot to personal servers','Priority feed polling (15s)','Advanced filters & rules','Multi-server support','All Supporter perks'],
+        features: ['Unlimited artist tracking','Invite and manage up to 3 of your servers','Priority feed polling (15s)','Advanced filters & rules'],
         cta: 'premium', ctaLabel: 'Go Premium', ctaClass: 'btn btn-gold',
       },
     ];
