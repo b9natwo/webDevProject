@@ -919,6 +919,7 @@
             <div class="dash-header-title">Your Servers</div>
             <div class="dash-header-sub">Servers where Prefix Hub is active</div>
           </div>
+          <div id="invite-btn-wrap"></div>
         </div>
         <div id="setup-needed-notice" style="display:none">
           <div class="alert alert-warning" style="margin-bottom:1rem">
@@ -942,10 +943,10 @@
             <div class="dash-header-title">Artist Tracking</div>
             <div class="dash-header-sub" id="artists-guild-label">Select a server to manage artists</div>
           </div>
-          <!--<button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
+          <button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Add Artist
-          </button>-->
+          </button>
         </div>
 
         <!-- Tier usage bar -->
@@ -1472,9 +1473,17 @@ async function loadServers() {
     const res = await fetch('/api/guilds/', { credentials: 'include' });
     guilds = await res.json();
 
-    const tier = currentUser?.premium_tier || 'free';
+    const tier = String(currentUser?.premium_tier || 'free').toLowerCase().trim();
     const canInvite = tier === 'premium';
     document.getElementById('premium-only-notice').style.display = canInvite ? 'none' : 'block';
+
+    // Show invite button in header only for Premium members
+    document.getElementById('invite-btn-wrap').innerHTML = canInvite
+      ? `<button class="btn btn-sm" onclick="openInviteLink()">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+           Invite to Server
+         </button>`
+      : '';
     const anyUnconfigured = guilds.some(g => !g.is_configured);
     document.getElementById('setup-needed-notice').style.display = anyUnconfigured ? 'block' : 'none';
 
@@ -1484,6 +1493,7 @@ async function loadServers() {
           <div class="empty-icon">🖥️</div>
           <h3>No servers yet</h3>
           <p>The bot needs to be in a server for it to appear here. Premium members can invite the bot to their own server.</p>
+          ${canInvite ? `<button class="btn btn-sm" onclick="openInviteLink()">Invite to Server</button>` : `<button class="btn btn-gold btn-sm" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}
         </div>`;
       return;
     }
@@ -1555,6 +1565,14 @@ function updateGuildSelector() {
     </div>`;
 }
 
+function openInviteLink() {
+  const clientId = document.querySelector('meta[name="discord-client-id"]')?.content || '';
+  window.open(
+    `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=274878024704&scope=bot%20applications.commands`,
+    '_blank'
+  );
+}
+
 // ── Artists ──────────────────────────────────────────────────────────
 async function loadArtists() {
   if (!selectedGuild) return;
@@ -1591,7 +1609,7 @@ function renderArtists(artists) {
       <div class="empty">
         <div class="empty-icon">🎤</div>
         <h3>No artists tracked</h3>
-        <!--<p>Click "+ Add Artist" to start tracking drops for specific artists.</p>-->
+        <p>Click "+ Add Artist" to start tracking drops for specific artists.</p>
       </div>`;
     return;
   }
@@ -1817,12 +1835,12 @@ async function loadUpgrade() {
       },
       {
         id: 'supporter', name: 'Supporter', price: '$4', period: '/mo',
-        features: ['Track up to 25 artists','Exclusive V.I.P access in Discord','Access live feed & community statistics'],
+        features: ['Track up to 25 artists','Supporter role in Discord','Access to dashboard','Support the project'],
         cta: 'supporter', ctaLabel: 'Subscribe as Supporter', ctaClass: 'btn',
       },
       {
         id: 'premium', name: 'Premium', price: '$12', period: '/mo',
-        features: ['Unlimited artist tracking','Invite and manage up to 3 of your servers','Priority feed polling (15s)','Advanced filters & rules'],
+        features: ['Unlimited artist tracking','Invite bot to personal servers','Priority feed polling (15s)','Advanced filters & rules','Multi-server support','All Supporter perks'],
         cta: 'premium', ctaLabel: 'Go Premium', ctaClass: 'btn btn-gold',
       },
     ];
