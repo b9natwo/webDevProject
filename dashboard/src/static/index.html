@@ -919,10 +919,6 @@
             <div class="dash-header-title">Your Servers</div>
             <div class="dash-header-sub">Servers where Prefix Hub is active</div>
           </div>
-          <button class="btn btn-sm" onclick="copyInviteLink()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Copy Invite Link
-          </button>
         </div>
         <div id="setup-needed-notice" style="display:none">
           <div class="alert alert-warning" style="margin-bottom:1rem">
@@ -946,10 +942,10 @@
             <div class="dash-header-title">Artist Tracking</div>
             <div class="dash-header-sub" id="artists-guild-label">Select a server to manage artists</div>
           </div>
-          <button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
+          <!--<button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Add Artist
-          </button>
+          </button>-->
         </div>
 
         <!-- Tier usage bar -->
@@ -1488,7 +1484,6 @@ async function loadServers() {
           <div class="empty-icon">🖥️</div>
           <h3>No servers yet</h3>
           <p>The bot needs to be in a server for it to appear here. Premium members can invite the bot to their own server.</p>
-          ${canInvite ? `<button class="btn btn-sm" onclick="copyInviteLink()">Copy Invite Link</button>` : `<button class="btn btn-gold btn-sm" onclick="switchTab('upgrade')">Upgrade to Premium</button>`}
         </div>`;
       return;
     }
@@ -1560,12 +1555,6 @@ function updateGuildSelector() {
     </div>`;
 }
 
-function copyInviteLink() {
-  const clientId = document.querySelector('meta[name="discord-client-id"]')?.content || '';
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=274878024704&scope=bot%20applications.commands`;
-  navigator.clipboard.writeText(url).then(() => toast('Invite link copied!')).catch(() => toast('Could not copy link', 'error'));
-}
-
 // ── Artists ──────────────────────────────────────────────────────────
 async function loadArtists() {
   if (!selectedGuild) return;
@@ -1602,7 +1591,7 @@ function renderArtists(artists) {
       <div class="empty">
         <div class="empty-icon">🎤</div>
         <h3>No artists tracked</h3>
-        <p>Click "+ Add Artist" to start tracking drops for specific artists.</p>
+        <!--<p>Click "+ Add Artist" to start tracking drops for specific artists.</p>-->
       </div>`;
     return;
   }
