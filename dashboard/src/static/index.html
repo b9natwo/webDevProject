@@ -943,10 +943,10 @@
             <div class="dash-header-title">Artist Tracking</div>
             <div class="dash-header-sub" id="artists-guild-label">Select a server to manage artists</div>
           </div>
-          <button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
+          <!--<button class="btn btn-sm" id="btn-add-artist" onclick="openAddArtist()" disabled>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
             Add Artist
-          </button>
+          </button>-->
         </div>
 
         <!-- Tier usage bar -->
@@ -1040,17 +1040,17 @@
                 <div style="width:44px;height:44px;border-radius:8px;background:var(--surface3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem">🎵</div>
                 <div style="min-width:0">
                   <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.2rem;font-weight:600">Prefix Hub <span style="font-weight:400;color:var(--text-dim)">Today at 4:12 PM</span></div>
-                  <div style="font-weight:700;font-size:0.85rem;color:#818cf8;margin-bottom:0.25rem">Travis Scott — New Song (CDQ)</div>
-                  <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem">Matched artist: <strong style="color:var(--text)">Travis Scott</strong> · Tags: <span style="color:var(--text-dim)">CDQ, 2025</span></div>
+                  <div style="font-weight:700;font-size:0.85rem;color:#818cf8;margin-bottom:0.25rem">[EARLY] Travis Scott — New Song</div>
+                  <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem">Matched artist: <strong style="color:var(--text)">Travis Scott</strong></div>
                   <div style="font-size:0.78rem;color:var(--text-muted)">Links: <a href="#" onclick="return false" style="color:var(--accent)">Pixeldrain</a> · <a href="#" onclick="return false" style="color:var(--accent)">Download</a></div>
-                  <div style="font-size:0.68rem;color:var(--text-dim);border-top:1px solid var(--border);padding-top:0.3rem;margin-top:0.4rem">leaked.cx</div>
+                  <div style="font-size:0.68rem;color:var(--text-dim);border-top:1px solid var(--border);padding-top:0.3rem;margin-top:0.4rem">Prefix Hub</div>
                 </div>
               </div>
 
               <!-- Plain text preview -->
               <div id="format-preview-text" style="border-left:3px solid var(--text-dim);background:var(--surface2);border-radius:8px;padding:0.85rem 1rem;display:none">
                 <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.3rem;font-weight:600">Prefix Hub <span style="font-weight:400">Today at 4:12 PM</span></div>
-                <div style="font-size:0.85rem;color:var(--text);line-height:1.6">🎵 <strong>Travis Scott — New Song (CDQ)</strong><br><span style="color:var(--accent);font-size:0.8rem">https://leaked.cx/threads/travis-scott-new-song-cdq</span></div>
+                <div style="font-size:0.85rem;color:var(--text);line-height:1.6">🎵 <strong>[EARLY] Travis Scott — New Song</strong><br><span style="color:var(--accent);font-size:0.8rem">https://leaked.cx/threads/travis-scott-new-song</span></div>
               </div>
             </div>
 
@@ -1835,12 +1835,12 @@ async function loadUpgrade() {
       },
       {
         id: 'supporter', name: 'Supporter', price: '$4', period: '/mo',
-        features: ['Track up to 25 artists','Supporter role in Discord','Access to dashboard','Support the project'],
+        features: ['Track up to 25 artists','Exclusive V.I.P access in Discord','Access live feed & community statistics'],
         cta: 'supporter', ctaLabel: 'Subscribe as Supporter', ctaClass: 'btn',
       },
       {
         id: 'premium', name: 'Premium', price: '$12', period: '/mo',
-        features: ['Unlimited artist tracking','Invite bot to personal servers','Priority feed polling (15s)','Advanced filters & rules','Multi-server support','All Supporter perks'],
+        features: ['Unlimited artist tracking','Invite bot to personal servers','Priority feed polling (15s)','Advanced filters & rules','Manage up to 3 servers'],
         cta: 'premium', ctaLabel: 'Go Premium', ctaClass: 'btn btn-gold',
       },
     ];
