@@ -5,10 +5,11 @@ FastAPI application entry point for the Prefix Hub web dashboard.
 from __future__ import annotations
 
 import logging
+import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from dashboard.src.auth.session import SessionMiddleware
@@ -60,6 +61,18 @@ def create_app() -> FastAPI:
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         log.exception("Unhandled exception on %s %s", request.method, request.url.path)
         return JSONResponse(status_code=500, content={"error": "Internal server error"})
+
+
+    @app.get("/geneva", response_class=FileResponse)
+    async def serve_lander() -> FileResponse:
+        lander_path = os.path.join(os.path.dirname(__file__), "pages", "geneva.mp4")
+        
+        if os.path.isfile(lander_path):
+            return FileResponse(lander_path)
+        
+        # Fallback or error if you forget to create the file
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Not Found")
 
     return app
 
