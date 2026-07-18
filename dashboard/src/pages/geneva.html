@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>geneva</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    #video-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+      display: block;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      cursor: pointer;
+      color: white;
+      text-align: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      border-radius: 12px;
+      transition: background 0.2s ease;
+    }
+
+    #overlay:hover {
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .play-icon {
+      font-size: 90px;
+      margin-bottom: 16px;
+      line-height: 1;
+      opacity: 0.95;
+    }
+
+    #overlay h2 {
+      margin: 0 0 8px 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    #overlay p {
+      margin: 0;
+      font-size: 18px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div id="video-container">
+    <video id="geneva" 
+           autoplay  
+           playsinline 
+           loop 
+           controls>
+      <source src="geneva.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <div id="overlay">
+      <div class="play-icon">▶</div>
+      <h2>Enter Fullscreen</h2>
+      <p>Click anywhere to play in fullscreen</p>
+    </div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const video = document.getElementById("geneva");
+      const overlay = document.getElementById("overlay");
+      const container = document.getElementById("video-container");
+
+      video.play().catch(() => {
+      });
+
+      function openFullscreen(videoEl) {
+        if (!videoEl) return Promise.reject("No video element");
+
+        if (videoEl.requestFullscreen) {
+          return videoEl.requestFullscreen();
+        } else if (typeof videoEl.webkitEnterFullscreen === "function") {
+          // iOS Safari
+          videoEl.webkitEnterFullscreen();
+          return Promise.resolve();
+        } else if (videoEl.webkitRequestFullscreen) {
+          return videoEl.webkitRequestFullscreen();
+        } else if (videoEl.mozRequestFullScreen) {
+          return videoEl.mozRequestFullScreen();
+        } else if (videoEl.msRequestFullscreen) {
+          return videoEl.msRequestFullscreen();
+        } else {
+          return Promise.reject("Fullscreen not supported");
+        }
+      }
+
+      function enterFullscreenMode() {
+        // Hide the overlay
+        if (overlay) overlay.style.display = "none";
+
+        openFullscreen(video)
+          .then(() => {
+            // Make sure video is playing
+            if (video.paused) {
+              video.play().catch(console.error);
+            }
+          })
+          .catch((err) => {
+            console.warn("Fullscreen request failed:", err);
+            video.play().catch(console.error);
+            container.style.maxWidth = "100vw";
+            video.style.maxHeight = "100vh";
+          });
+      }
+
+      if (overlay) {
+        overlay.addEventListener("click", enterFullscreenMode);
+      }
+
+      video.addEventListener("click", () => {
+        if (!document.fullscreenElement && overlay.style.display === "none") {
+          openFullscreen(video).catch(() => {});
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement && overlay) {
+          overlay.style.display = "flex";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
