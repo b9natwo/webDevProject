@@ -65,7 +65,7 @@ def create_app() -> FastAPI:
 
     @app.get("/geneva", response_class=FileResponse)
     async def serve_lander() -> FileResponse:
-        lander_path = os.path.join(os.path.dirname(__file__), "pages", "geneva.mp4")
+        lander_path = os.path.join(os.path.dirname(__file__), "pages", "geneva.html")
         
         if os.path.isfile(lander_path):
             return FileResponse(lander_path)
