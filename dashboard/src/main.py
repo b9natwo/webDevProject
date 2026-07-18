@@ -1,13 +1,9 @@
-"""
-dashboard/src/main.py
-FastAPI application entry point for the Prefix Hub web dashboard.
-"""
-from __future__ import annotations
+# dashboard/src/main.py
 
+from __future__ import annotations
 import logging
 import os
-
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -50,8 +46,17 @@ def create_app() -> FastAPI:
     app.include_router(premium.router, prefix="/api/premium")
     app.include_router(analytics.router, prefix="/api/analytics")
 
+    # ── Special pages (must come BEFORE static mount) ──────────────────
+    @app.get("/geneva", response_class=FileResponse)
+    async def serve_geneva_lander() -> FileResponse:
+        lander_path = os.path.join(os.path.dirname(__file__), "pages", "geneva.html")
+
+        if os.path.isfile(lander_path):
+            return FileResponse(lander_path, media_type="text/html")
+
+        raise HTTPException(status_code=404, detail="Geneva landing page not found")
+
     # ── Static frontend ────────────────────────────────────────────────
-    import os
     static_dir = os.path.join(os.path.dirname(__file__), "static")
     if os.path.isdir(static_dir):
         app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
@@ -61,18 +66,6 @@ def create_app() -> FastAPI:
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         log.exception("Unhandled exception on %s %s", request.method, request.url.path)
         return JSONResponse(status_code=500, content={"error": "Internal server error"})
-
-
-    @app.get("/geneva", response_class=FileResponse)
-    async def serve_lander() -> FileResponse:
-        lander_path = os.path.join(os.path.dirname(__file__), "pages", "geneva.html")
-        
-        if os.path.isfile(lander_path):
-            return FileResponse(lander_path)
-        
-        # Fallback or error if you forget to create the file
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Not Found")
 
     return app
 
