@@ -94,8 +94,7 @@
       const overlay = document.getElementById("overlay");
       const container = document.getElementById("video-container");
 
-      video.play().catch(() => {
-      });
+      video.play().catch(() => {});
 
       function openFullscreen(videoEl) {
         if (!videoEl) return Promise.reject("No video element");
@@ -103,7 +102,6 @@
         if (videoEl.requestFullscreen) {
           return videoEl.requestFullscreen();
         } else if (typeof videoEl.webkitEnterFullscreen === "function") {
-          // iOS Safari
           videoEl.webkitEnterFullscreen();
           return Promise.resolve();
         } else if (videoEl.webkitRequestFullscreen) {
@@ -118,21 +116,17 @@
       }
 
       function enterFullscreenMode() {
-        // Hide the overlay
-        if (overlay) overlay.style.display = "none";
-
         openFullscreen(video)
           .then(() => {
+            // Hide the overlay
+            if (overlay) overlay.style.display = "none";
             // Make sure video is playing
             if (video.paused) {
               video.play().catch(console.error);
             }
           })
           .catch((err) => {
-            console.warn("Fullscreen request failed:", err);
-            video.play().catch(console.error);
-            container.style.maxWidth = "100vw";
-            video.style.maxHeight = "100vh";
+            console.warn("Failed to enter fullscreen. Awaiting user click.");
           });
       }
 
@@ -151,6 +145,9 @@
           overlay.style.display = "flex";
         }
       });
+
+      // pls
+      enterFullscreenMode();
     });
   </script>
 </body>
