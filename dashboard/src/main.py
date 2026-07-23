@@ -56,7 +56,7 @@ def create_app() -> FastAPI:
 
         raise HTTPException(status_code=404, detail="Geneva landing page not found")
 
-    @app.get("/greeeeeeen", response_class=FileResponse)
+    @app.get("/udaproblem", response_class=FileResponse)
     async def serve_geneva_lander() -> FileResponse:
         lander_path = os.path.join(os.path.dirname(__file__), "pages", "greengoblin.html")
 
