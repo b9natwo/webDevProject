@@ -56,6 +56,15 @@ def create_app() -> FastAPI:
 
         raise HTTPException(status_code=404, detail="Geneva landing page not found")
 
+    @app.get("/manfuckyou", response_class=FileResponse)
+    async def serve_geneva_lander() -> FileResponse:
+        lander_path = os.path.join(os.path.dirname(__file__), "pages", "greengoblin.html")
+
+        if os.path.isfile(lander_path):
+            return FileResponse(lander_path, media_type="text/html")
+
+        raise HTTPException(status_code=404, detail="Geneva landing page not found")
+
     # ── Static frontend ────────────────────────────────────────────────
     static_dir = os.path.join(os.path.dirname(__file__), "static")
     if os.path.isdir(static_dir):
