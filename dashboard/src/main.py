@@ -56,9 +56,9 @@ def create_app() -> FastAPI:
 
         raise HTTPException(status_code=404, detail="Geneva landing page not found")
 
-    @app.get("/perfectpair", response_class=FileResponse)
+    @app.get("/help", response_class=FileResponse)
     async def serve_geneva_lander() -> FileResponse:
-        lander_path = os.path.join(os.path.dirname(__file__), "pages", "perfectpair.html")
+        lander_path = os.path.join(os.path.dirname(__file__), "pages", "help.html")
 
         if os.path.isfile(lander_path):
             return FileResponse(lander_path, media_type="text/html")
